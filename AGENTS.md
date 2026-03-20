@@ -322,6 +322,7 @@ Each integration test must:
 
 When generating code for this service:
 
+- DO AND ANSWER ONLY WHAT IS EXPLICITLY REQUESTED IN THE PROMPT
 - stay strictly within the roadmap scope
 - do not add new features
 - do not expand the domain model
