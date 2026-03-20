@@ -1,6 +1,5 @@
-import { validate } from 'uuid';
 import { BusinessError } from './error';
-
+import { validate as uuidValidate } from 'uuid';
 
 export class Recipe {
   id: string;
@@ -16,7 +15,7 @@ export class Recipe {
     description: string | null,
     instructions: string,
   ) {
-    if (!validate(id)) {
+    if (!uuidValidate(id)) {
       throw new BusinessError('Invalid UUID');
     }
     this.id = id;

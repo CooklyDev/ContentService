@@ -4,10 +4,19 @@ import { RecipeRepository } from '../../../services/interfaces/repos/recipes.int
 
 @Injectable()
 export class StubRecipeRepository implements RecipeRepository {
-  async getById(id: string) {
-    return null;
+  getById(): Promise<null> {
+    return Promise.resolve(null);
   }
-  async create() {}
-  async update() {}
-  async delete() {}
+
+  create(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  update(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  delete(): Promise<void> {
+    return Promise.resolve();
+  }
 }

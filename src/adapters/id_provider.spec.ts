@@ -1,4 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
+import { jest } from '@jest/globals';
 import { Request } from 'express';
 
 import { StubIdProvider } from './id_provider';
@@ -6,10 +7,11 @@ import { StubIdProvider } from './id_provider';
 describe('StubIdProvider', () => {
   it('should return session id from request header', () => {
     // Arrange
+    const getHeader = jest.fn((headerName: string) =>
+      headerName === 'X-Session-ID' ? 'session-id' : undefined,
+    );
     const request = {
-      get: jest.fn((headerName: string) =>
-        headerName === 'X-Session-ID' ? 'session-id' : undefined,
-      ),
+      get: getHeader,
     } as Pick<Request, 'get'> as Request;
     const provider = new StubIdProvider(request);
 
@@ -18,7 +20,7 @@ describe('StubIdProvider', () => {
 
     // Assert
     expect(userId).toBe('session-id');
-    expect(request.get).toHaveBeenCalledWith('X-Session-ID');
+    expect(getHeader).toHaveBeenCalledWith('X-Session-ID');
   });
 
   it('should throw when request header is missing', () => {

@@ -17,8 +17,9 @@ export class StubIdProvider implements IdProvider {
     const sessionId = this.req.get('X-Session-ID');
 
     if (!sessionId) {
-      return ""
+      throw new UnauthorizedException('Missing X-Session-ID header');
     }
-    return sessionId
+
+    return sessionId;
   }
 }

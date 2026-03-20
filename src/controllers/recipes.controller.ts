@@ -1,24 +1,24 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
-import { create } from 'domain';
-import { CreateRecipeDto, UpdateRecipeDto } from 'src/services/dto';
-import { RecipesService } from 'src/services/recipes/recipes.service';
+import { Body, Controller, Delete, Post, Put } from '@nestjs/common';
+
+import { CreateRecipeDto, UpdateRecipeDto } from '../services/dto';
+import { RecipesService } from '../services/recipes/recipes.service';
 
 @Controller('recipes')
 export class RecipesController {
-    constructor(private readonly recipesService: RecipesService) {}
+  constructor(private readonly recipesService: RecipesService) {}
 
-    @Post()
-    async create(@Body() createRecipeDto: CreateRecipeDto) {
-        return this.recipesService.create(createRecipeDto);
-    }
+  @Post()
+  async create(@Body() createRecipeDto: CreateRecipeDto) {
+    return this.recipesService.create(createRecipeDto);
+  }
 
-    @Put()
-    async update(@Body() updateRecipeDto: UpdateRecipeDto) {
-        return this.recipesService.update(updateRecipeDto);
-    }
+  @Put()
+  async update(@Body() updateRecipeDto: UpdateRecipeDto) {
+    return this.recipesService.update(updateRecipeDto);
+  }
 
-    @Delete()
-    async delete(@Body('id') id: string) {
-        return this.recipesService.delete(id);
-    }
+  @Delete()
+  async delete(@Body('id') id: string) {
+    return this.recipesService.delete(id);
+  }
 }

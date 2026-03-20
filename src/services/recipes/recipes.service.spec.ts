@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { BusinessError } from '../../domain/error';
@@ -7,23 +8,34 @@ import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens';
 
 describe('RecipesService', () => {
   let service: RecipesService;
-  let idProvider: { getUserId: jest.Mock<string, []> };
+  let getUserIdMock: jest.Mock<() => string>;
+  let createMock: jest.Mock<(data: unknown) => Promise<void>>;
+  let getByIdMock: jest.Mock<(id: string) => Promise<Recipe | null>>;
+  let updateMock: jest.Mock<(recipe: Recipe) => Promise<void>>;
+  let deleteMock: jest.Mock<(id: string) => Promise<void>>;
+  let idProvider: { getUserId: () => string };
   let recipeRepository: {
-    create: jest.Mock<Promise<void>, [unknown]>;
-    getById: jest.Mock<Promise<Recipe | null>, [string]>;
-    update: jest.Mock<Promise<void>, [Recipe]>;
-    delete: jest.Mock<Promise<void>, [string]>;
+    create: (data: unknown) => Promise<void>;
+    getById: (id: string) => Promise<Recipe | null>;
+    update: (recipe: Recipe) => Promise<void>;
+    delete: (id: string) => Promise<void>;
   };
 
   beforeEach(async () => {
+    getUserIdMock = jest.fn<() => string>();
+    createMock = jest.fn<(data: unknown) => Promise<void>>();
+    getByIdMock = jest.fn<(id: string) => Promise<Recipe | null>>();
+    updateMock = jest.fn<(recipe: Recipe) => Promise<void>>();
+    deleteMock = jest.fn<(id: string) => Promise<void>>();
+
     idProvider = {
-      getUserId: jest.fn<string, []>(),
+      getUserId: getUserIdMock,
     };
     recipeRepository = {
-      create: jest.fn<Promise<void>, [unknown]>(),
-      getById: jest.fn<Promise<Recipe | null>, [string]>(),
-      update: jest.fn<Promise<void>, [Recipe]>(),
-      delete: jest.fn<Promise<void>, [string]>(),
+      create: createMock,
+      getById: getByIdMock,
+      update: updateMock,
+      delete: deleteMock,
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -54,8 +66,8 @@ describe('RecipesService', () => {
 
   it('should create recipe with user id from id provider', async () => {
     // Arrange
-    idProvider.getUserId.mockReturnValue('session-id');
-    recipeRepository.create.mockResolvedValue();
+    getUserIdMock.mockReturnValue('session-id');
+    createMock.mockResolvedValue();
 
     // Act
     await service.create({
@@ -66,7 +78,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
-    expect(recipeRepository.create).toHaveBeenCalledWith({
+    expect(createMock).toHaveBeenCalledWith({
       userId: 'session-id',
       name: 'Recipe name',
       description: 'Description',
@@ -83,9 +95,9 @@ describe('RecipesService', () => {
       'Old description',
       'Old instructions',
     );
-    idProvider.getUserId.mockReturnValue('session-id');
-    recipeRepository.getById.mockResolvedValue(recipe);
-    recipeRepository.update.mockResolvedValue();
+    getUserIdMock.mockReturnValue('session-id');
+    getByIdMock.mockResolvedValue(recipe);
+    updateMock.mockResolvedValue();
 
     // Act
     await service.update({
@@ -96,7 +108,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
-    expect(recipeRepository.update).toHaveBeenCalledWith(recipe);
+    expect(updateMock).toHaveBeenCalledWith(recipe);
     expect(recipe.name).toBe('New name');
     expect(recipe.description).toBe('New description');
     expect(recipe.instructions).toBe('New instructions');
@@ -111,14 +123,14 @@ describe('RecipesService', () => {
       null,
       'Instructions',
     );
-    idProvider.getUserId.mockReturnValue('session-id');
-    recipeRepository.getById.mockResolvedValue(recipe);
+    getUserIdMock.mockReturnValue('session-id');
+    getByIdMock.mockResolvedValue(recipe);
 
     // Act
     const action = service.delete('22222222-2222-4222-8222-222222222222');
 
     // Assert
     await expect(action).rejects.toThrow(BusinessError);
-    expect(recipeRepository.delete).not.toHaveBeenCalled();
+    expect(deleteMock).not.toHaveBeenCalled();
   });
 });
