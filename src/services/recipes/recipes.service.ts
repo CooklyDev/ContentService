@@ -23,6 +23,24 @@ export class RecipesService {
     });
   }
 
+  async getByUserId(userId: string) {
+    return this.recipeRepository.getByUserId(userId);
+  }
+
+  async getById(id: string) {
+    const userId = this.idProvider.getUserId();
+    const recipe = await this.recipeRepository.getById(id);
+
+    if (!recipe) {
+      throw new BusinessError('Recipe not found');
+    }
+    if (recipe.userId !== userId) {
+      throw new BusinessError('Recipe not found');
+    }
+
+    return recipe;
+  }
+
   async update(data: UpdateRecipeDto) {
     const userId = this.idProvider.getUserId();
 

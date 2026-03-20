@@ -22,6 +22,16 @@ export class PrismaRecipeRepository implements RecipeRepository {
 
     return recipe ? toDomain(recipe) : null;
   }
+
+  async getByUserId(userId: string): Promise<Recipe[]> {
+    const recipes = (await this.prisma.recipe.findMany({
+      where: { userId: userId },
+      select: recipeSelect,
+    })) as RecipeRow[];
+
+    return recipes.map(toDomain);
+  }
+
   async create(data: CreateRecipeDto): Promise<void> {
     await this.prisma.recipe.create({
       data: data,

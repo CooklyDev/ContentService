@@ -11,12 +11,14 @@ describe('RecipesService', () => {
   let getUserIdMock: jest.Mock<() => string>;
   let createMock: jest.Mock<(data: unknown) => Promise<void>>;
   let getByIdMock: jest.Mock<(id: string) => Promise<Recipe | null>>;
+  let getByUserIdMock: jest.Mock<(userId: string) => Promise<Recipe[]>>;
   let updateMock: jest.Mock<(recipe: Recipe) => Promise<void>>;
   let deleteMock: jest.Mock<(id: string) => Promise<void>>;
   let idProvider: { getUserId: () => string };
   let recipeRepository: {
     create: (data: unknown) => Promise<void>;
     getById: (id: string) => Promise<Recipe | null>;
+    getByUserId: (userId: string) => Promise<Recipe[]>;
     update: (recipe: Recipe) => Promise<void>;
     delete: (id: string) => Promise<void>;
   };
@@ -25,6 +27,7 @@ describe('RecipesService', () => {
     getUserIdMock = jest.fn<() => string>();
     createMock = jest.fn<(data: unknown) => Promise<void>>();
     getByIdMock = jest.fn<(id: string) => Promise<Recipe | null>>();
+    getByUserIdMock = jest.fn<(userId: string) => Promise<Recipe[]>>();
     updateMock = jest.fn<(recipe: Recipe) => Promise<void>>();
     deleteMock = jest.fn<(id: string) => Promise<void>>();
 
@@ -34,6 +37,7 @@ describe('RecipesService', () => {
     recipeRepository = {
       create: createMock,
       getById: getByIdMock,
+      getByUserId: getByUserIdMock,
       update: updateMock,
       delete: deleteMock,
     };
@@ -112,6 +116,77 @@ describe('RecipesService', () => {
     expect(recipe.name).toBe('New name');
     expect(recipe.description).toBe('New description');
     expect(recipe.instructions).toBe('New instructions');
+  });
+
+  it('should return recipes by user id', async () => {
+    // Arrange
+    const recipes = [
+      new Recipe(
+        '33333333-3333-4333-8333-333333333333',
+        'target-user',
+        'Recipe one',
+        null,
+        'Instructions one',
+      ),
+      new Recipe(
+        '44444444-4444-4444-8444-444444444444',
+        'target-user',
+        'Recipe two',
+        'Description',
+        'Instructions two',
+      ),
+    ];
+    getByUserIdMock.mockResolvedValue(recipes);
+
+    // Act
+    const result = await service.getByUserId('target-user');
+
+    // Assert
+    expect(getByUserIdMock).toHaveBeenCalledWith('target-user');
+    expect(result).toEqual(recipes);
+  });
+
+  it('should return recipe by id when current user owns it', async () => {
+    // Arrange
+    const recipe = new Recipe(
+      '55555555-5555-4555-8555-555555555555',
+      'session-id',
+      'Recipe name',
+      null,
+      'Instructions',
+    );
+    getUserIdMock.mockReturnValue('session-id');
+    getByIdMock.mockResolvedValue(recipe);
+
+    // Act
+    const result = await service.getById(
+      '55555555-5555-4555-8555-555555555555',
+    );
+
+    // Assert
+    expect(getByIdMock).toHaveBeenCalledWith(
+      '55555555-5555-4555-8555-555555555555',
+    );
+    expect(result).toBe(recipe);
+  });
+
+  it('should throw when getting recipe by id of another user', async () => {
+    // Arrange
+    const recipe = new Recipe(
+      '66666666-6666-4666-8666-666666666666',
+      'another-user',
+      'Recipe name',
+      null,
+      'Instructions',
+    );
+    getUserIdMock.mockReturnValue('session-id');
+    getByIdMock.mockResolvedValue(recipe);
+
+    // Act
+    const action = service.getById('66666666-6666-4666-8666-666666666666');
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
   });
 
   it('should throw when deleting recipe of another user', async () => {
