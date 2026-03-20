@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { BusinessError } from '../../domain/error';
-import { CreateRecipeDto, UpdateRecipeDto } from '../dto';
-import type { IdProvider } from '../interfaces/common';
-import type { RecipeRepository } from '../interfaces/repos/recipes.interface';
-import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens';
+import { BusinessError } from '../../domain/error.js';
+import { CreateRecipeDto, UpdateRecipeDto } from '../dto.js';
+import type { IdProvider } from '../interfaces/common.js';
+import type { RecipeRepository } from '../interfaces/repos/recipes.interface.js';
+import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens.js';
 
 @Injectable()
 export class RecipesService {

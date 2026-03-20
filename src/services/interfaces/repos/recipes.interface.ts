@@ -1,5 +1,5 @@
-import { Recipe } from '../../../domain/recipe';
-import { CreateRecipeDto } from '../../dto';
+import { Recipe } from '../../../domain/recipe.js';
+import { CreateRecipeDto } from '../../dto.js';
 
 export interface RecipeRepository {
   getById(id: string): Promise<Recipe | null>;

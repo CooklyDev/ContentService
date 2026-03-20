@@ -5,19 +5,22 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "generated/prisma"
+  provider               = "prisma-client"
+  output                 = "../src/adapters/generated/prisma"
+  runtime                = "nodejs"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Recipe {
-  id String @id @default(uuid())
-  userId String @default(uuid())
-  name String
-  description String?
+  id           String  @id @default(uuid())
+  userId       String  @default(uuid())
+  name         String
+  description  String?
   instructions String?
 }

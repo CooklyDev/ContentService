@@ -1,4 +1,4 @@
-import { BusinessError } from './error';
+import { BusinessError } from './error.js';
 import { validate as uuidValidate } from 'uuid';
 
 export class Recipe {

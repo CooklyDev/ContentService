@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { BusinessError } from '../../domain/error';
-import { Recipe } from '../../domain/recipe';
-import { RecipesService } from './recipes.service';
-import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens';
+import { BusinessError } from '../../domain/error.js';
+import { Recipe } from '../../domain/recipe.js';
+import { RecipesService } from './recipes.service.js';
+import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens.js';
 
 describe('RecipesService', () => {
   let service: RecipesService;

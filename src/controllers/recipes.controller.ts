@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Post, Put } from '@nestjs/common';
 
-import { CreateRecipeDto, UpdateRecipeDto } from '../services/dto';
-import { RecipesService } from '../services/recipes/recipes.service';
+import { CreateRecipeDto, UpdateRecipeDto } from '../services/dto.js';
+import { RecipesService } from '../services/recipes/recipes.service.js';
 
 @Controller('recipes')
 export class RecipesController {

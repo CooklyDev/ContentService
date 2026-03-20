@@ -1,4 +1,4 @@
-import { Recipe } from 'src/domain/recipe';
+import { Recipe } from '../../../domain/recipe.js';
 
 export type RecipeRow = {
   id: string;

@@ -1,16 +1,24 @@
-import { Module, Scope } from '@nestjs/common';
-import { PrismaClient } from '../../prisma/generated/prisma/client';
+import { Module } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from './generated/prisma/client.js';
 
 @Module({
   providers: [
     {
       provide: PrismaClient,
       useFactory: () => {
-        return new PrismaClient(); // Создание нового экземпляра PrismaClient
+        const connectionString = process.env.DATABASE_URL;
+
+        if (!connectionString) {
+          throw new Error('DATABASE_URL is not set');
+        }
+
+        return new PrismaClient({
+          adapter: new PrismaPg({ connectionString }),
+        });
       },
-      scope: Scope.REQUEST, // Новый экземпляр для каждого запроса
     },
   ],
-  exports: [PrismaClient], // Экспорт для использования в других модулях
+  exports: [PrismaClient],
 })
 export class PrismaModule {}

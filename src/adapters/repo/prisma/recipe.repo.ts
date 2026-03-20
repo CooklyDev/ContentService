@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '../../../../prisma/generated/prisma/client';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import {
   recipeSelect,
   type RecipeRow,
   toDomain,
   toPersistence,
-} from './recipe.mappers';
-import { Recipe } from 'src/domain/recipe';
-import { CreateRecipeDto } from 'src/services/dto';
-import { RecipeRepository } from 'src/services/interfaces/repos/recipes.interface';
+} from './recipe.mappers.js';
+import { Recipe } from '../../../domain/recipe.js';
+import { CreateRecipeDto } from '../../../services/dto.js';
+import { RecipeRepository } from '../../../services/interfaces/repos/recipes.interface.js';
 
 @Injectable()
 export class PrismaRecipeRepository implements RecipeRepository {

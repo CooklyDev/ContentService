@@ -7,7 +7,7 @@ import {
 import { REQUEST } from '@nestjs/core';
 import type { Request } from 'express';
 
-import { IdProvider } from '../services/interfaces/common';
+import { IdProvider } from '../services/interfaces/common.js';
 
 @Injectable({ scope: Scope.REQUEST })
 export class StubIdProvider implements IdProvider {
