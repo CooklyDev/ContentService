@@ -1,3 +1,3 @@
 export interface IdProvider {
-  getUserId(): string;
+  getUserId(): Promise<string>;
 }
