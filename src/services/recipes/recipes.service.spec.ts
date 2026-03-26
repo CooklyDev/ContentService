@@ -8,13 +8,13 @@ import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens.js';
 
 describe('RecipesService', () => {
   let service: RecipesService;
-  let getUserIdMock: jest.Mock<() => string>;
+  let getUserIdMock: jest.Mock<() => Promise<string | null>>;
   let createMock: jest.Mock<(data: unknown) => Promise<void>>;
   let getByIdMock: jest.Mock<(id: string) => Promise<Recipe | null>>;
   let getByUserIdMock: jest.Mock<(userId: string) => Promise<Recipe[]>>;
   let updateMock: jest.Mock<(recipe: Recipe) => Promise<void>>;
   let deleteMock: jest.Mock<(id: string) => Promise<void>>;
-  let idProvider: { getUserId: () => string };
+  let idProvider: { getUserId: () => Promise<string | null> };
   let recipeRepository: {
     create: (data: unknown) => Promise<void>;
     getById: (id: string) => Promise<Recipe | null>;
@@ -24,7 +24,7 @@ describe('RecipesService', () => {
   };
 
   beforeEach(async () => {
-    getUserIdMock = jest.fn<() => string>();
+    getUserIdMock = jest.fn<() => Promise<string | null>>();
     createMock = jest.fn<(data: unknown) => Promise<void>>();
     getByIdMock = jest.fn<(id: string) => Promise<Recipe | null>>();
     getByUserIdMock = jest.fn<(userId: string) => Promise<Recipe[]>>();
@@ -70,24 +70,25 @@ describe('RecipesService', () => {
 
   it('should create recipe with user id from id provider', async () => {
     // Arrange
-    getUserIdMock.mockReturnValue('session-id');
+    getUserIdMock.mockResolvedValue('session-id');
     createMock.mockResolvedValue();
 
     // Act
     await service.create({
-      userId: 'ignored-user-id',
       name: 'Recipe name',
       description: 'Description',
       instructions: 'Instructions',
     });
 
     // Assert
-    expect(createMock).toHaveBeenCalledWith({
-      userId: 'session-id',
-      name: 'Recipe name',
-      description: 'Description',
-      instructions: 'Instructions',
-    });
+    expect(createMock).toHaveBeenCalledTimes(1);
+
+    const createdRecipe = createMock.mock.calls[0]?.[0] as Recipe;
+    expect(createdRecipe).toBeInstanceOf(Recipe);
+    expect(createdRecipe.userId).toBe('session-id');
+    expect(createdRecipe.name).toBe('Recipe name');
+    expect(createdRecipe.description).toBe('Description');
+    expect(createdRecipe.instructions).toBe('Instructions');
   });
 
   it('should update recipe when current user owns it', async () => {
@@ -99,7 +100,7 @@ describe('RecipesService', () => {
       'Old description',
       'Old instructions',
     );
-    getUserIdMock.mockReturnValue('session-id');
+    getUserIdMock.mockResolvedValue('session-id');
     getByIdMock.mockResolvedValue(recipe);
     updateMock.mockResolvedValue();
 
@@ -136,10 +137,11 @@ describe('RecipesService', () => {
         'Instructions two',
       ),
     ];
+    getUserIdMock.mockResolvedValue('target-user');
     getByUserIdMock.mockResolvedValue(recipes);
 
     // Act
-    const result = await service.getByUserId('target-user');
+    const result = await service.getByUserId();
 
     // Assert
     expect(getByUserIdMock).toHaveBeenCalledWith('target-user');
@@ -155,7 +157,7 @@ describe('RecipesService', () => {
       null,
       'Instructions',
     );
-    getUserIdMock.mockReturnValue('session-id');
+    getUserIdMock.mockResolvedValue('session-id');
     getByIdMock.mockResolvedValue(recipe);
 
     // Act
@@ -179,7 +181,7 @@ describe('RecipesService', () => {
       null,
       'Instructions',
     );
-    getUserIdMock.mockReturnValue('session-id');
+    getUserIdMock.mockResolvedValue('session-id');
     getByIdMock.mockResolvedValue(recipe);
 
     // Act
@@ -198,7 +200,7 @@ describe('RecipesService', () => {
       null,
       'Instructions',
     );
-    getUserIdMock.mockReturnValue('session-id');
+    getUserIdMock.mockResolvedValue('session-id');
     getByIdMock.mockResolvedValue(recipe);
 
     // Act
@@ -207,5 +209,126 @@ describe('RecipesService', () => {
     // Assert
     await expect(action).rejects.toThrow(BusinessError);
     expect(deleteMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when user id cannot be resolved', async () => {
+    // Arrange
+    getUserIdMock.mockResolvedValue(null);
+
+    // Act
+    const action = service.getByUserId();
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(getByUserIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when id format is invalid', async () => {
+    // Arrange
+    getUserIdMock.mockResolvedValue('session-id');
+
+    // Act
+    const action = service.getById('invalid-id');
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(getByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when id is empty', async () => {
+    // Arrange
+    getUserIdMock.mockResolvedValue('session-id');
+
+    // Act
+    const action = service.getById('');
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(getByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when delete with invalid id format', async () => {
+    // Arrange
+    getUserIdMock.mockResolvedValue('session-id');
+
+    // Act
+    const action = service.delete('invalid-id-format');
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(getByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when update with invalid id format', async () => {
+    // Arrange
+    getUserIdMock.mockResolvedValue('session-id');
+
+    // Act
+    const action = service.update({
+      id: 'not-a-uuid',
+      name: 'New name',
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(getByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when creating recipe with empty name', async () => {
+    // Arrange
+
+    // Act
+    const action = service.create({
+      name: '   ',
+      description: null,
+      instructions: 'Valid instructions',
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when creating recipe with empty instructions', async () => {
+    // Arrange
+
+    // Act
+    const action = service.create({
+      name: 'Valid name',
+      description: null,
+      instructions: '   ',
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when updating recipe with empty name', async () => {
+    // Arrange
+
+    // Act
+    const action = service.update({
+      id: '11111111-1111-4111-8111-111111111111',
+      name: '   ',
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(getByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when updating recipe with empty instructions', async () => {
+    // Arrange
+
+    // Act
+    const action = service.update({
+      id: '11111111-1111-4111-8111-111111111111',
+      instructions: '   ',
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(BusinessError);
+    expect(getByIdMock).not.toHaveBeenCalled();
   });
 });

@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  Scope,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import type { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
@@ -13,39 +8,59 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
 interface ResolveSessionResponse {
-  user_id: string;
+  data: {
+    UserID: string;
+  };
+  error: {
+    code: string;
+    message: string;
+  } | null;
+  success: boolean;
 }
 
 @Injectable({ scope: Scope.REQUEST })
-export class StubIdProvider implements IdProvider {
+export class RestIdProvider implements IdProvider {
   constructor(
     @Inject(REQUEST) private readonly req: Request,
     private readonly http: HttpService,
     private configService: ConfigService,
   ) {}
 
-  async getUserId(): Promise<string> {
+  async getUserId(): Promise<string | null> {
     const sessionId = this.req.get('X-Session-ID');
 
     if (!sessionId) {
-      throw new UnauthorizedException('Missing X-Session-ID header');
+      return null;
     }
 
-    const authUrl = this.configService.getOrThrow<string>('auth.url');
+    const authUrl = this.configService.getOrThrow<string>('AUTH_URL');
     const resolveEndpoint = this.configService.getOrThrow<string>(
-      'auth.session_resolve_endpoint',
+      'AUTH_SESSION_RESOLVE_ENDPOINT',
     );
+    const formData = new URLSearchParams();
+    formData.append('session_id', sessionId);
 
     try {
       const response = await firstValueFrom(
-        this.http.post<ResolveSessionResponse>(authUrl + resolveEndpoint, {
-          session_id: sessionId,
-        }),
+        this.http.post<ResolveSessionResponse>(
+          authUrl + resolveEndpoint,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+        ),
       );
 
-      return response.data.user_id;
-    } catch {
-      throw new UnauthorizedException('Invalid session ID');
+      if (!response.data.success) {
+        return null;
+      }
+
+      return response.data.data.UserID || null;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   }
 }

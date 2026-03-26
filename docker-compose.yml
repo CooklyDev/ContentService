@@ -2,18 +2,18 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-content_service}
-      POSTGRES_USER: ${POSTGRES_USER:-content_service}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-content_service}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - '${POSTGRES_PORT:-5432}:5432'
+      - '${POSTGRES_PORT}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           'CMD-SHELL',
-          'pg_isready -U ${POSTGRES_USER:-content_service} -d ${POSTGRES_DB:-content_service}',
+          'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}',
         ]
       interval: 5s
       timeout: 5s
@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: Dockerfile.migrate
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-content_service}:${POSTGRES_PASSWORD:-content_service}@postgres:5432/${POSTGRES_DB:-content_service}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
     depends_on:
       postgres:
         condition: service_healthy
@@ -36,15 +36,19 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-content_service}:${POSTGRES_PASSWORD:-content_service}@postgres:5432/${POSTGRES_DB:-content_service}
-      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PORT: ${APP_PORT}
+      AUTH_URL: ${AUTH_URL}
+      AUTH_SESSION_RESOLVE_ENDPOINT: ${AUTH_SESSION_RESOLVE_ENDPOINT}
     depends_on:
       postgres:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
     ports:
-      - '${APP_PORT:-3000}:3000'
+      - '${APP_PORT}:3000'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
 volumes:
   postgres_data:

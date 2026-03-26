@@ -18,9 +18,9 @@ datasource db {
 }
 
 model Recipe {
-  id           String  @id @default(uuid())
-  userId       String  @default(uuid())
+  id           String @id
+  userId       String
   name         String
   description  String?
-  instructions String?
+  instructions String
 }

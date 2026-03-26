@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { v4, validate as validateUuid } from 'uuid';
+
 import { BusinessError } from '../../domain/error.js';
+import { Recipe } from '../../domain/recipe.js';
 import { CreateRecipeDto, UpdateRecipeDto } from '../dto.js';
 import type { IdProvider } from '../interfaces/common.js';
 import type { RecipeRepository } from '../interfaces/repos/recipes.interface.js';
@@ -14,21 +17,62 @@ export class RecipesService {
     private readonly recipeRepository: RecipeRepository,
   ) {}
 
-  async create(data: CreateRecipeDto) {
-    const userId = this.idProvider.getUserId();
+  private async getCurrentUserId(): Promise<string> {
+    const userId = await this.idProvider.getUserId();
 
-    await this.recipeRepository.create({
-      ...data,
-      userId: userId,
-    });
+    if (!userId) {
+      throw new BusinessError('Unauthorized');
+    }
+
+    return userId;
   }
 
-  async getByUserId(userId: string) {
+  private validateId(id: string): void {
+    if (!id || typeof id !== 'string') {
+      throw new BusinessError('Invalid id');
+    }
+
+    if (!validateUuid(id)) {
+      throw new BusinessError('Invalid id format');
+    }
+  }
+
+  private validateName(name: string): void {
+    if (typeof name !== 'string' || name.trim().length === 0) {
+      throw new BusinessError('Invalid recipe name');
+    }
+  }
+
+  private validateInstructions(instructions: string): void {
+    if (typeof instructions !== 'string' || instructions.trim().length === 0) {
+      throw new BusinessError('Invalid recipe instructions');
+    }
+  }
+
+  async create(data: CreateRecipeDto) {
+    this.validateName(data.name);
+    this.validateInstructions(data.instructions);
+    const userId = await this.getCurrentUserId();
+    const recipeId = v4();
+    const recipe = new Recipe(
+      recipeId,
+      userId,
+      data.name,
+      data.description,
+      data.instructions,
+    );
+
+    await this.recipeRepository.create(recipe);
+  }
+
+  async getByUserId() {
+    const userId = await this.getCurrentUserId();
     return this.recipeRepository.getByUserId(userId);
   }
 
   async getById(id: string) {
-    const userId = this.idProvider.getUserId();
+    this.validateId(id);
+    const userId = await this.getCurrentUserId();
     const recipe = await this.recipeRepository.getById(id);
 
     if (!recipe) {
@@ -42,7 +86,14 @@ export class RecipesService {
   }
 
   async update(data: UpdateRecipeDto) {
-    const userId = this.idProvider.getUserId();
+    this.validateId(data.id);
+    if (data.name !== undefined) {
+      this.validateName(data.name);
+    }
+    if (data.instructions !== undefined) {
+      this.validateInstructions(data.instructions);
+    }
+    const userId = await this.getCurrentUserId();
 
     const currentRecipe = await this.recipeRepository.getById(data.id);
     if (!currentRecipe) {
@@ -57,7 +108,8 @@ export class RecipesService {
     await this.recipeRepository.update(currentRecipe);
   }
   async delete(id: string) {
-    const userId = this.idProvider.getUserId();
+    this.validateId(id);
+    const userId = await this.getCurrentUserId();
 
     const currentRecipe = await this.recipeRepository.getById(id);
     if (!currentRecipe) {

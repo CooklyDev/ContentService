@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { RecipesService } from './services/recipes/recipes.service.js';
-import { StubIdProvider } from './adapters/id_provider.js';
+import { RestIdProvider } from './adapters/id_provider.js';
 import { RecipesController } from './controllers/recipes.controller.js';
 import {
   ID_PROVIDER,
@@ -10,15 +10,16 @@ import {
 import { PrismaRecipeRepository } from './adapters/repo/prisma/recipe.repo.js';
 import { PrismaModule } from './adapters/client.js';
 import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [PrismaModule, ConfigModule.forRoot({ isGlobal: true })],
+  imports: [PrismaModule, ConfigModule.forRoot({ isGlobal: true }), HttpModule],
   controllers: [RecipesController],
   providers: [
     RecipesService,
     {
       provide: ID_PROVIDER,
-      useClass: StubIdProvider,
+      useClass: RestIdProvider,
     },
     {
       provide: RECIPE_REPOSITORY,

@@ -15,9 +15,9 @@ import { RecipesService } from '../services/recipes/recipes.service.js';
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
-  @Get('user/:userId')
-  async getByUserId(@Param('userId') userId: string) {
-    return this.recipesService.getByUserId(userId);
+  @Get()
+  async getByUserId() {
+    return this.recipesService.getByUserId();
   }
 
   @Get(':id')

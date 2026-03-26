@@ -7,7 +7,6 @@ import {
   toPersistence,
 } from './recipe.mappers.js';
 import { Recipe } from '../../../domain/recipe.js';
-import { CreateRecipeDto } from '../../../services/dto.js';
 import { RecipeRepository } from '../../../services/interfaces/repos/recipes.interface.js';
 
 @Injectable()
@@ -32,9 +31,12 @@ export class PrismaRecipeRepository implements RecipeRepository {
     return recipes.map(toDomain);
   }
 
-  async create(data: CreateRecipeDto): Promise<void> {
+  async create(data: Recipe): Promise<void> {
     await this.prisma.recipe.create({
-      data: data,
+      data: {
+        id: data.id,
+        ...toPersistence(data),
+      },
     });
   }
   async update(data: Recipe): Promise<void> {
