@@ -51,3 +51,13 @@ export { Prisma };
  *
  */
 export type Recipe = Prisma.RecipeModel;
+/**
+ * Model Collection
+ *
+ */
+export type Collection = Prisma.CollectionModel;
+/**
+ * Model CollectionRecipe
+ *
+ */
+export type CollectionRecipe = Prisma.CollectionRecipeModel;

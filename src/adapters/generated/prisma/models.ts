@@ -8,4 +8,6 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Recipe.js';
+export type * from './models/Collection.js';
+export type * from './models/CollectionRecipe.js';
 export type * from './commonInputTypes.js';
