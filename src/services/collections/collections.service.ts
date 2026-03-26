@@ -59,8 +59,19 @@ export class CollectionsService {
     }
   }
 
+  private validateDescription(description: string | null | undefined): void {
+    if (description === undefined || description === null) {
+      return;
+    }
+
+    if (typeof description !== 'string' || description.trim().length === 0) {
+      throw new InvalidInput('description', 'Invalid collection description');
+    }
+  }
+
   async create(data: CreateCollectionDto): Promise<void> {
     this.validateName(data.name);
+    this.validateDescription(data.description);
     const userId = await this.getCurrentUserId();
     const collectionId = v4();
     const collection = new Collection(
@@ -97,6 +108,9 @@ export class CollectionsService {
     this.validateId(data.id);
     if (data.name !== undefined) {
       this.validateName(data.name);
+    }
+    if (data.description !== undefined) {
+      this.validateDescription(data.description);
     }
     const userId = await this.getCurrentUserId();
 

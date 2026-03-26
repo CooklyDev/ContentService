@@ -53,8 +53,19 @@ export class RecipesService {
     }
   }
 
+  private validateDescription(description: string | null | undefined): void {
+    if (description === undefined || description === null) {
+      return;
+    }
+
+    if (typeof description !== 'string' || description.trim().length === 0) {
+      throw new InvalidInput('description', 'Invalid recipe description');
+    }
+  }
+
   async create(data: CreateRecipeDto) {
     this.validateName(data.name);
+    this.validateDescription(data.description);
     this.validateInstructions(data.instructions);
     const userId = await this.getCurrentUserId();
     const recipeId = v4();
@@ -93,6 +104,9 @@ export class RecipesService {
     this.validateId(data.id);
     if (data.name !== undefined) {
       this.validateName(data.name);
+    }
+    if (data.description !== undefined) {
+      this.validateDescription(data.description);
     }
     if (data.instructions !== undefined) {
       this.validateInstructions(data.instructions);

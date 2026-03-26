@@ -335,4 +335,33 @@ describe('RecipesService', () => {
     await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
   });
+
+  it('should throw when creating recipe with empty description string', async () => {
+    // Arrange
+
+    // Act
+    const action = service.create({
+      name: 'Valid name',
+      description: '   ',
+      instructions: 'Valid instructions',
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(InvalidInput);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when updating recipe with invalid description type', async () => {
+    // Arrange
+
+    // Act
+    const action = service.update({
+      id: '11111111-1111-4111-8111-111111111111',
+      description: { bad: 'value' } as unknown as string,
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(InvalidInput);
+    expect(getByIdMock).not.toHaveBeenCalled();
+  });
 });

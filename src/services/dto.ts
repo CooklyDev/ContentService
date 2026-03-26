@@ -6,6 +6,7 @@ export class CreateRecipeDto {
 
   @ApiProperty({
     description: 'Optional recipe description',
+    type: String,
     nullable: true,
   })
   description!: string | null;
@@ -23,6 +24,7 @@ export class UpdateRecipeDto {
 
   @ApiProperty({
     description: 'Optional recipe description',
+    type: String,
     nullable: true,
     required: false,
   })
@@ -38,6 +40,7 @@ export class CreateCollectionDto {
 
   @ApiProperty({
     description: 'Optional collection description',
+    type: String,
     nullable: true,
   })
   description!: string | null;
@@ -52,6 +55,7 @@ export class UpdateCollectionDto {
 
   @ApiProperty({
     description: 'Optional collection description',
+    type: String,
     nullable: true,
     required: false,
   })
