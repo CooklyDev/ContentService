@@ -5,6 +5,7 @@ import { CollectionsService } from './services/collections/collections.service.j
 import { RestIdProvider } from './adapters/id_provider.js';
 import { RecipesController } from './controllers/recipes.controller.js';
 import { CollectionsController } from './controllers/collections.controller.js';
+import { HealthController } from './controllers/health.controller.js';
 import {
   ID_PROVIDER,
   LOGGER,
@@ -21,7 +22,7 @@ import { GlobalExceptionFilter } from './controllers/filters/global-exception.fi
 
 @Module({
   imports: [PrismaModule, ConfigModule.forRoot({ isGlobal: true }), HttpModule],
-  controllers: [RecipesController, CollectionsController],
+  controllers: [HealthController, RecipesController, CollectionsController],
   providers: [
     RecipesService,
     CollectionsService,
