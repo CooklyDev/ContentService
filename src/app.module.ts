@@ -5,12 +5,14 @@ import { RestIdProvider } from './adapters/id_provider.js';
 import { RecipesController } from './controllers/recipes.controller.js';
 import {
   ID_PROVIDER,
+  LOGGER,
   RECIPE_REPOSITORY,
 } from './services/interfaces/tokens.js';
 import { PrismaRecipeRepository } from './adapters/repo/prisma/recipe.repo.js';
 import { PrismaModule } from './adapters/client.js';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { NestLoggerAdapter } from './adapters/logger.js';
 
 @Module({
   imports: [PrismaModule, ConfigModule.forRoot({ isGlobal: true }), HttpModule],
@@ -24,6 +26,10 @@ import { HttpModule } from '@nestjs/axios';
     {
       provide: RECIPE_REPOSITORY,
       useClass: PrismaRecipeRepository,
+    },
+    {
+      provide: LOGGER,
+      useClass: NestLoggerAdapter,
     },
   ],
 })

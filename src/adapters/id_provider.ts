@@ -6,6 +6,8 @@ import { firstValueFrom } from 'rxjs';
 import { IdProvider } from '../services/interfaces/common.js';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import type { AppLogger } from '../services/interfaces/logger.interface.js';
+import { LOGGER } from '../services/interfaces/tokens.js';
 
 interface ResolveSessionResponse {
   data: {
@@ -24,6 +26,7 @@ export class RestIdProvider implements IdProvider {
     @Inject(REQUEST) private readonly req: Request,
     private readonly http: HttpService,
     private configService: ConfigService,
+    @Inject(LOGGER) private readonly logger: AppLogger,
   ) {}
 
   async getUserId(): Promise<string | null> {
@@ -59,7 +62,10 @@ export class RestIdProvider implements IdProvider {
 
       return response.data.data.UserID || null;
     } catch (error) {
-      console.error(error);
+      this.logger.error('Failed to resolve user session');
+      if (error instanceof Error) {
+        this.logger.debug(error.message);
+      }
       return null;
     }
   }
