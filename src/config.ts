@@ -1,9 +1,24 @@
-export default registerAuthConfig('auth', () => ({
-  port: process.env.AUTH_PORT || 8000,
-  host: process.env.AUTH_HOST || 'localhost',
-  session_resolve_endpoint:
-    process.env.AUTH_SESSION_RESOLVE_ENDPOINT || '/api/v1/resolve',
-}));
+export default registerAuthConfig('auth', () => {
+  const port = process.env.AUTH_PORT;
+  const host = process.env.AUTH_HOST;
+  const session_resolve_endpoint = process.env.AUTH_SESSION_RESOLVE_ENDPOINT;
+
+  if (!port) {
+    throw new Error('AUTH_PORT is required');
+  }
+  if (!host) {
+    throw new Error('AUTH_HOST is required');
+  }
+  if (!session_resolve_endpoint) {
+    throw new Error('AUTH_SESSION_RESOLVE_ENDPOINT is required');
+  }
+
+  return {
+    port,
+    host,
+    session_resolve_endpoint,
+  };
+});
 function registerAuthConfig(
   key: string,
   configFactory: () => {
