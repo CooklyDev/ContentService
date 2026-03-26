@@ -413,6 +413,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never
 
 export const ModelName = {
   Recipe: 'Recipe',
+  Collection: 'Collection',
+  CollectionRecipe: 'CollectionRecipe',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -434,7 +436,7 @@ export type TypeMap<
     omit: GlobalOmitOptions;
   };
   meta: {
-    modelProps: 'recipe';
+    modelProps: 'recipe' | 'collection' | 'collectionRecipe';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -514,6 +516,158 @@ export type TypeMap<
         };
       };
     };
+    Collection: {
+      payload: Prisma.$CollectionPayload<ExtArgs>;
+      fields: Prisma.CollectionFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.CollectionFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.CollectionFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+        };
+        findFirst: {
+          args: Prisma.CollectionFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.CollectionFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+        };
+        findMany: {
+          args: Prisma.CollectionFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>[];
+        };
+        create: {
+          args: Prisma.CollectionCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+        };
+        createMany: {
+          args: Prisma.CollectionCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.CollectionCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>[];
+        };
+        delete: {
+          args: Prisma.CollectionDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+        };
+        update: {
+          args: Prisma.CollectionUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+        };
+        deleteMany: {
+          args: Prisma.CollectionDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.CollectionUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.CollectionUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>[];
+        };
+        upsert: {
+          args: Prisma.CollectionUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionPayload>;
+        };
+        aggregate: {
+          args: Prisma.CollectionAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCollection>;
+        };
+        groupBy: {
+          args: Prisma.CollectionGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.CollectionGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.CollectionCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.CollectionCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
+    CollectionRecipe: {
+      payload: Prisma.$CollectionRecipePayload<ExtArgs>;
+      fields: Prisma.CollectionRecipeFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.CollectionRecipeFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.CollectionRecipeFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>;
+        };
+        findFirst: {
+          args: Prisma.CollectionRecipeFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.CollectionRecipeFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>;
+        };
+        findMany: {
+          args: Prisma.CollectionRecipeFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>[];
+        };
+        create: {
+          args: Prisma.CollectionRecipeCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>;
+        };
+        createMany: {
+          args: Prisma.CollectionRecipeCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.CollectionRecipeCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>[];
+        };
+        delete: {
+          args: Prisma.CollectionRecipeDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>;
+        };
+        update: {
+          args: Prisma.CollectionRecipeUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>;
+        };
+        deleteMany: {
+          args: Prisma.CollectionRecipeDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.CollectionRecipeUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.CollectionRecipeUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>[];
+        };
+        upsert: {
+          args: Prisma.CollectionRecipeUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CollectionRecipePayload>;
+        };
+        aggregate: {
+          args: Prisma.CollectionRecipeAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCollectionRecipe>;
+        };
+        groupBy: {
+          args: Prisma.CollectionRecipeGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.CollectionRecipeGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.CollectionRecipeCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.CollectionRecipeCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -563,6 +717,24 @@ export const RecipeScalarFieldEnum = {
 
 export type RecipeScalarFieldEnum =
   (typeof RecipeScalarFieldEnum)[keyof typeof RecipeScalarFieldEnum];
+
+export const CollectionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+} as const;
+
+export type CollectionScalarFieldEnum =
+  (typeof CollectionScalarFieldEnum)[keyof typeof CollectionScalarFieldEnum];
+
+export const CollectionRecipeScalarFieldEnum = {
+  collectionId: 'collectionId',
+  recipeId: 'recipeId',
+} as const;
+
+export type CollectionRecipeScalarFieldEnum =
+  (typeof CollectionRecipeScalarFieldEnum)[keyof typeof CollectionRecipeScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
@@ -725,6 +897,8 @@ export type PrismaClientOptions = (
 };
 export type GlobalOmitConfig = {
   recipe?: Prisma.RecipeOmit;
+  collection?: Prisma.CollectionOmit;
+  collectionRecipe?: Prisma.CollectionRecipeOmit;
 };
 
 /* Types for Logging */

@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common';
 
 import { RecipesService } from './services/recipes/recipes.service.js';
+import { CollectionsService } from './services/collections/collections.service.js';
 import { RestIdProvider } from './adapters/id_provider.js';
 import { RecipesController } from './controllers/recipes.controller.js';
+import { CollectionsController } from './controllers/collections.controller.js';
 import {
   ID_PROVIDER,
   LOGGER,
   RECIPE_REPOSITORY,
+  COLLECTION_REPOSITORY,
 } from './services/interfaces/tokens.js';
 import { PrismaRecipeRepository } from './adapters/repo/prisma/recipe.repo.js';
+import { PrismaCollectionRepository } from './adapters/repo/prisma/collection.repo.js';
 import { PrismaModule } from './adapters/client.js';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
@@ -17,9 +21,10 @@ import { GlobalExceptionFilter } from './controllers/filters/global-exception.fi
 
 @Module({
   imports: [PrismaModule, ConfigModule.forRoot({ isGlobal: true }), HttpModule],
-  controllers: [RecipesController],
+  controllers: [RecipesController, CollectionsController],
   providers: [
     RecipesService,
+    CollectionsService,
     {
       provide: ID_PROVIDER,
       useClass: RestIdProvider,
@@ -27,6 +32,10 @@ import { GlobalExceptionFilter } from './controllers/filters/global-exception.fi
     {
       provide: RECIPE_REPOSITORY,
       useClass: PrismaRecipeRepository,
+    },
+    {
+      provide: COLLECTION_REPOSITORY,
+      useClass: PrismaCollectionRepository,
     },
     {
       provide: LOGGER,

@@ -55,6 +55,8 @@ export const AnyNull = runtime.AnyNull;
 
 export const ModelName = {
   Recipe: 'Recipe',
+  Collection: 'Collection',
+  CollectionRecipe: 'CollectionRecipe',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -83,6 +85,24 @@ export const RecipeScalarFieldEnum = {
 
 export type RecipeScalarFieldEnum =
   (typeof RecipeScalarFieldEnum)[keyof typeof RecipeScalarFieldEnum];
+
+export const CollectionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+} as const;
+
+export type CollectionScalarFieldEnum =
+  (typeof CollectionScalarFieldEnum)[keyof typeof CollectionScalarFieldEnum];
+
+export const CollectionRecipeScalarFieldEnum = {
+  collectionId: 'collectionId',
+  recipeId: 'recipeId',
+} as const;
+
+export type CollectionRecipeScalarFieldEnum =
+  (typeof CollectionRecipeScalarFieldEnum)[keyof typeof CollectionRecipeScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
