@@ -7,6 +7,7 @@ import {
   toPersistence,
 } from './collection.mappers.js';
 import { Collection } from '../../../domain/collection.js';
+import { Recipe } from '../../../domain/recipe.js';
 import { CollectionRepository } from '../../../services/interfaces/repos/collections.interface.js';
 import {
   recipeSelect,
