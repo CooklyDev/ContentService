@@ -1,7 +1,11 @@
 import { jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { BusinessError } from '../../domain/error.js';
+import {
+  InvalidInput,
+  TargetNotFountError,
+  UnauthorizedError,
+} from '../../domain/error.js';
 import { Recipe } from '../../domain/recipe.js';
 import { RecipesService } from './recipes.service.js';
 import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens.js';
@@ -188,7 +192,7 @@ describe('RecipesService', () => {
     const action = service.getById('66666666-6666-4666-8666-666666666666');
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(TargetNotFountError);
   });
 
   it('should throw when deleting recipe of another user', async () => {
@@ -207,7 +211,7 @@ describe('RecipesService', () => {
     const action = service.delete('22222222-2222-4222-8222-222222222222');
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(TargetNotFountError);
     expect(deleteMock).not.toHaveBeenCalled();
   });
 
@@ -219,7 +223,7 @@ describe('RecipesService', () => {
     const action = service.getByUserId();
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(UnauthorizedError);
     expect(getByUserIdMock).not.toHaveBeenCalled();
   });
 
@@ -231,7 +235,7 @@ describe('RecipesService', () => {
     const action = service.getById('invalid-id');
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
   });
 
@@ -243,7 +247,7 @@ describe('RecipesService', () => {
     const action = service.getById('');
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
   });
 
@@ -255,7 +259,7 @@ describe('RecipesService', () => {
     const action = service.delete('invalid-id-format');
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
   });
 
@@ -270,7 +274,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
   });
 
@@ -285,7 +289,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(createMock).not.toHaveBeenCalled();
   });
 
@@ -300,7 +304,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(createMock).not.toHaveBeenCalled();
   });
 
@@ -314,7 +318,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
   });
 
@@ -328,7 +332,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
-    await expect(action).rejects.toThrow(BusinessError);
+    await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
   });
 });

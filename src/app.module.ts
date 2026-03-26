@@ -13,6 +13,7 @@ import { PrismaModule } from './adapters/client.js';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { NestLoggerAdapter } from './adapters/logger.js';
+import { GlobalExceptionFilter } from './controllers/filters/global-exception.filter.js';
 
 @Module({
   imports: [PrismaModule, ConfigModule.forRoot({ isGlobal: true }), HttpModule],
@@ -31,6 +32,7 @@ import { NestLoggerAdapter } from './adapters/logger.js';
       provide: LOGGER,
       useClass: NestLoggerAdapter,
     },
+    GlobalExceptionFilter,
   ],
 })
 export class AppModule {}

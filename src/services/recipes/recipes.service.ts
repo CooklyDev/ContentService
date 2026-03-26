@@ -2,7 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { v4, validate as validateUuid } from 'uuid';
 
-import { BusinessError } from '../../domain/error.js';
+import {
+  InvalidInput,
+  TargetNotFountError,
+  UnauthorizedError,
+} from '../../domain/error.js';
 import { Recipe } from '../../domain/recipe.js';
 import { CreateRecipeDto, UpdateRecipeDto } from '../dto.js';
 import type { IdProvider } from '../interfaces/common.js';
@@ -21,7 +25,7 @@ export class RecipesService {
     const userId = await this.idProvider.getUserId();
 
     if (!userId) {
-      throw new BusinessError('Unauthorized');
+      throw new UnauthorizedError();
     }
 
     return userId;
@@ -29,23 +33,23 @@ export class RecipesService {
 
   private validateId(id: string): void {
     if (!id || typeof id !== 'string') {
-      throw new BusinessError('Invalid id');
+      throw new InvalidInput('id');
     }
 
     if (!validateUuid(id)) {
-      throw new BusinessError('Invalid id format');
+      throw new InvalidInput('id', 'Invalid id format');
     }
   }
 
   private validateName(name: string): void {
     if (typeof name !== 'string' || name.trim().length === 0) {
-      throw new BusinessError('Invalid recipe name');
+      throw new InvalidInput('name', 'Invalid recipe name');
     }
   }
 
   private validateInstructions(instructions: string): void {
     if (typeof instructions !== 'string' || instructions.trim().length === 0) {
-      throw new BusinessError('Invalid recipe instructions');
+      throw new InvalidInput('instructions', 'Invalid recipe instructions');
     }
   }
 
@@ -76,10 +80,10 @@ export class RecipesService {
     const recipe = await this.recipeRepository.getById(id);
 
     if (!recipe) {
-      throw new BusinessError('Recipe not found');
+      throw new TargetNotFountError('recipe', 'Recipe not found');
     }
     if (recipe.userId !== userId) {
-      throw new BusinessError('Recipe not found');
+      throw new TargetNotFountError('recipe', 'Recipe not found');
     }
 
     return recipe;
@@ -97,10 +101,10 @@ export class RecipesService {
 
     const currentRecipe = await this.recipeRepository.getById(data.id);
     if (!currentRecipe) {
-      throw new BusinessError('Recipe not found');
+      throw new TargetNotFountError('recipe', 'Recipe not found');
     }
     if (currentRecipe.userId !== userId) {
-      throw new BusinessError('Recipe not found');
+      throw new TargetNotFountError('recipe', 'Recipe not found');
     }
 
     currentRecipe.update(data.name, data.description, data.instructions);
@@ -113,10 +117,10 @@ export class RecipesService {
 
     const currentRecipe = await this.recipeRepository.getById(id);
     if (!currentRecipe) {
-      throw new BusinessError('Recipe not found');
+      throw new TargetNotFountError('recipe', 'Recipe not found');
     }
     if (currentRecipe.userId !== userId) {
-      throw new BusinessError('Recipe not found');
+      throw new TargetNotFountError('recipe', 'Recipe not found');
     }
 
     await this.recipeRepository.delete(currentRecipe.id);

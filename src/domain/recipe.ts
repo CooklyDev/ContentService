@@ -1,4 +1,4 @@
-import { BusinessError } from './error.js';
+import { InvalidInput } from './error.js';
 import { validate as uuidValidate } from 'uuid';
 
 export class Recipe {
@@ -16,7 +16,7 @@ export class Recipe {
     instructions: string,
   ) {
     if (!uuidValidate(id)) {
-      throw new BusinessError('Invalid UUID');
+      throw new InvalidInput('recipe.id', 'Invalid UUID');
     }
     this.id = id;
     this.userId = userId;

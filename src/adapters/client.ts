@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/prisma/client.js';
+import { AdapterServerError } from './error.js';
 
 @Module({
   providers: [
@@ -10,7 +11,7 @@ import { PrismaClient } from './generated/prisma/client.js';
         const connectionString = process.env.DATABASE_URL;
 
         if (!connectionString) {
-          throw new Error('DATABASE_URL is not set');
+          throw new AdapterServerError('DATABASE_URL is not set');
         }
 
         return new PrismaClient({
