@@ -28,6 +28,14 @@ export class InvalidInput extends Error {
   }
 }
 
+export class TargetAlreadyExists extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TargetAlreadyExists';
+    Object.setPrototypeOf(this, TargetAlreadyExists.prototype);
+  }
+}
+
 export function IsUnauthorizedError(error: Error): error is UnauthorizedError {
   return error instanceof UnauthorizedError;
 }
@@ -40,4 +48,10 @@ export function IsTargetNotFountError(
 
 export function IsInvalidInput(error: Error): error is InvalidInput {
   return error instanceof InvalidInput;
+}
+
+export function IsTargetAlreadyExists(
+  error: Error,
+): error is TargetAlreadyExists {
+  return error instanceof TargetAlreadyExists;
 }

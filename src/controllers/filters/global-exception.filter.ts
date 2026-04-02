@@ -14,6 +14,7 @@ import {
 } from '../../adapters/error.js';
 import {
   IsInvalidInput,
+  IsTargetAlreadyExists,
   IsTargetNotFountError,
   IsUnauthorizedError,
 } from '../../domain/error.js';
@@ -57,6 +58,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message = exception.message;
     } else if (exception instanceof Error && IsInvalidInput(exception)) {
       statusCode = HttpStatus.BAD_REQUEST;
+      message = exception.message;
+    } else if (exception instanceof Error && IsTargetAlreadyExists(exception)) {
+      statusCode = HttpStatus.CONFLICT;
       message = exception.message;
     } else if (exception instanceof Error && IsAdapterServerError(exception)) {
       statusCode = HttpStatus.INTERNAL_SERVER_ERROR;

@@ -6,6 +6,14 @@ import { GlobalExceptionFilter } from './controllers/filters/global-exception.fi
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const frontendUrl = process.env.FRONTEND_URL;
+
+  if (frontendUrl) {
+    app.enableCors({
+      origin: frontendUrl,
+    });
+  }
+
   app.useGlobalFilters(app.get(GlobalExceptionFilter));
 
   const config = new DocumentBuilder()

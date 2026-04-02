@@ -4,6 +4,7 @@ import { v4, validate as validateUuid } from 'uuid';
 
 import {
   InvalidInput,
+  TargetAlreadyExists,
   TargetNotFountError,
   UnauthorizedError,
 } from '../../domain/error.js';
@@ -161,6 +162,11 @@ export class CollectionsService {
     const recipe = await this.recipeRepository.getById(data.recipeId);
     if (!recipe) {
       throw new TargetNotFountError('recipe', 'Recipe not found');
+    }
+
+    const hasRecipe = collection.recipes.some((item) => item.id === data.recipeId);
+    if (hasRecipe) {
+      throw new TargetAlreadyExists('Recipe already exists in collection');
     }
 
     await this.collectionRepository.addRecipeToCollection(
