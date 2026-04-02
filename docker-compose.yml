@@ -33,7 +33,7 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      PORT: ${APP_PORT}
+      PORT: 3000
       AUTH_URL: ${AUTH_URL}
       AUTH_SESSION_RESOLVE_ENDPOINT: ${AUTH_SESSION_RESOLVE_ENDPOINT}
     depends_on:
