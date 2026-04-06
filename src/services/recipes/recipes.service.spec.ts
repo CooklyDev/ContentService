@@ -82,6 +82,12 @@ describe('RecipesService', () => {
       name: 'Recipe name',
       description: 'Description',
       instructions: 'Instructions',
+      calories: 500,
+      proteins: 25,
+      carbohydrates: 40,
+      preparationTime: 15,
+      cookTime: 35,
+      complexity: 6,
     });
 
     // Assert
@@ -93,6 +99,12 @@ describe('RecipesService', () => {
     expect(createdRecipe.name).toBe('Recipe name');
     expect(createdRecipe.description).toBe('Description');
     expect(createdRecipe.instructions).toBe('Instructions');
+    expect(createdRecipe.calories).toBe(500);
+    expect(createdRecipe.proteins).toBe(25);
+    expect(createdRecipe.carbohydrates).toBe(40);
+    expect(createdRecipe.preparationTime).toBe(15);
+    expect(createdRecipe.cookTime).toBe(35);
+    expect(createdRecipe.complexity).toBe(6);
   });
 
   it('should update recipe when current user owns it', async () => {
@@ -114,6 +126,12 @@ describe('RecipesService', () => {
       name: 'New name',
       description: 'New description',
       instructions: 'New instructions',
+      calories: 600,
+      proteins: 30,
+      carbohydrates: 50,
+      preparationTime: 20,
+      cookTime: 40,
+      complexity: 8,
     });
 
     // Assert
@@ -121,6 +139,12 @@ describe('RecipesService', () => {
     expect(recipe.name).toBe('New name');
     expect(recipe.description).toBe('New description');
     expect(recipe.instructions).toBe('New instructions');
+    expect(recipe.calories).toBe(600);
+    expect(recipe.proteins).toBe(30);
+    expect(recipe.carbohydrates).toBe(50);
+    expect(recipe.preparationTime).toBe(20);
+    expect(recipe.cookTime).toBe(40);
+    expect(recipe.complexity).toBe(8);
   });
 
   it('should return recipes by user id', async () => {
@@ -358,6 +382,36 @@ describe('RecipesService', () => {
     const action = service.update({
       id: '11111111-1111-4111-8111-111111111111',
       description: { bad: 'value' } as unknown as string,
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(InvalidInput);
+    expect(getByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when creating recipe with invalid complexity', async () => {
+    // Arrange
+
+    // Act
+    const action = service.create({
+      name: 'Valid name',
+      description: null,
+      instructions: 'Valid instructions',
+      complexity: 11,
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(InvalidInput);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when updating recipe with negative calories', async () => {
+    // Arrange
+
+    // Act
+    const action = service.update({
+      id: '11111111-1111-4111-8111-111111111111',
+      calories: -1,
     });
 
     // Assert

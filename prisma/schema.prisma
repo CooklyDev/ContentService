@@ -18,11 +18,17 @@ datasource db {
 }
 
 model Recipe {
-  id           String @id
-  userId       String
-  name         String
-  description  String?
-  instructions String
+  id              String @id
+  userId          String
+  name            String
+  description     String?
+  instructions    String
+  calories        Int?
+  proteins        Int?
+  carbohydrates   Int?
+  preparationTime Int?
+  cookTime        Int?
+  complexity      Int?
 }
 
 model Collection {

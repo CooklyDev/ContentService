@@ -63,10 +63,42 @@ export class RecipesService {
     }
   }
 
+  private validateOptionalIntegerField(
+    field: string,
+    value: number | null | undefined,
+  ): void {
+    if (value === undefined || value === null) {
+      return;
+    }
+
+    if (!Number.isInteger(value) || value < 0) {
+      throw new InvalidInput(field, `Invalid ${field}`);
+    }
+  }
+
+  private validateComplexity(complexity: number | null | undefined): void {
+    if (complexity === undefined || complexity === null) {
+      return;
+    }
+
+    if (!Number.isInteger(complexity) || complexity < 1 || complexity > 10) {
+      throw new InvalidInput(
+        'complexity',
+        'Complexity must be an integer from 1 to 10',
+      );
+    }
+  }
+
   async create(data: CreateRecipeDto) {
     this.validateName(data.name);
     this.validateDescription(data.description);
     this.validateInstructions(data.instructions);
+    this.validateOptionalIntegerField('calories', data.calories);
+    this.validateOptionalIntegerField('proteins', data.proteins);
+    this.validateOptionalIntegerField('carbohydrates', data.carbohydrates);
+    this.validateOptionalIntegerField('preparationTime', data.preparationTime);
+    this.validateOptionalIntegerField('cookTime', data.cookTime);
+    this.validateComplexity(data.complexity);
     const userId = await this.getCurrentUserId();
     const recipeId = v4();
     const recipe = new Recipe(
@@ -75,6 +107,12 @@ export class RecipesService {
       data.name,
       data.description,
       data.instructions,
+      data.calories ?? null,
+      data.proteins ?? null,
+      data.carbohydrates ?? null,
+      data.preparationTime ?? null,
+      data.cookTime ?? null,
+      data.complexity ?? null,
     );
 
     await this.recipeRepository.create(recipe);
@@ -111,6 +149,27 @@ export class RecipesService {
     if (data.instructions !== undefined) {
       this.validateInstructions(data.instructions);
     }
+    if (data.calories !== undefined) {
+      this.validateOptionalIntegerField('calories', data.calories);
+    }
+    if (data.proteins !== undefined) {
+      this.validateOptionalIntegerField('proteins', data.proteins);
+    }
+    if (data.carbohydrates !== undefined) {
+      this.validateOptionalIntegerField('carbohydrates', data.carbohydrates);
+    }
+    if (data.preparationTime !== undefined) {
+      this.validateOptionalIntegerField(
+        'preparationTime',
+        data.preparationTime,
+      );
+    }
+    if (data.cookTime !== undefined) {
+      this.validateOptionalIntegerField('cookTime', data.cookTime);
+    }
+    if (data.complexity !== undefined) {
+      this.validateComplexity(data.complexity);
+    }
     const userId = await this.getCurrentUserId();
 
     const currentRecipe = await this.recipeRepository.getById(data.id);
@@ -121,7 +180,17 @@ export class RecipesService {
       throw new TargetNotFountError('recipe', 'Recipe not found');
     }
 
-    currentRecipe.update(data.name, data.description, data.instructions);
+    currentRecipe.update(
+      data.name,
+      data.description,
+      data.instructions,
+      data.calories,
+      data.proteins,
+      data.carbohydrates,
+      data.preparationTime,
+      data.cookTime,
+      data.complexity,
+    );
 
     await this.recipeRepository.update(currentRecipe);
   }

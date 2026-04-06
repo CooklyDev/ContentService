@@ -16,7 +16,11 @@ import {
   ApiSecurity,
 } from '@nestjs/swagger';
 
-import { CreateRecipeDto, UpdateRecipeDto } from '../services/dto.js';
+import {
+  CreateRecipeDto,
+  RecipeResponseDto,
+  UpdateRecipeDto,
+} from '../services/dto.js';
 import { RecipesService } from '../services/recipes/recipes.service.js';
 
 @ApiTags('recipes')
@@ -30,6 +34,8 @@ export class RecipesController {
   @ApiResponse({
     status: 200,
     description: 'List of recipes',
+    type: RecipeResponseDto,
+    isArray: true,
   })
   async getByUserId() {
     return this.recipesService.getByUserId();
@@ -41,6 +47,7 @@ export class RecipesController {
   @ApiResponse({
     status: 200,
     description: 'Recipe found',
+    type: RecipeResponseDto,
   })
   @ApiResponse({
     status: 404,

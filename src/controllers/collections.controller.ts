@@ -20,6 +20,7 @@ import {
   CreateCollectionDto,
   UpdateCollectionDto,
   AddRecipeToCollectionDto,
+  CollectionResponseDto,
   RemoveRecipeFromCollectionDto,
 } from '../services/dto.js';
 import { CollectionsService } from '../services/collections/collections.service.js';
@@ -35,6 +36,8 @@ export class CollectionsController {
   @ApiResponse({
     status: 200,
     description: 'List of collections',
+    type: CollectionResponseDto,
+    isArray: true,
   })
   async getByUserId() {
     return this.collectionsService.getByUserId();
@@ -46,6 +49,7 @@ export class CollectionsController {
   @ApiResponse({
     status: 200,
     description: 'Collection found',
+    type: CollectionResponseDto,
   })
   @ApiResponse({
     status: 404,
