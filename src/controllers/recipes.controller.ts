@@ -5,12 +5,14 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Put,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiBody,
   ApiSecurity,
@@ -31,14 +33,20 @@ export class RecipesController {
 
   @Get()
   @ApiOperation({ summary: 'Get all recipes for current user' })
+  @ApiQuery({
+    name: 'userId',
+    required: false,
+    description:
+      'Target user ID. For another user only public recipes are returned',
+  })
   @ApiResponse({
     status: 200,
     description: 'List of recipes',
     type: RecipeResponseDto,
     isArray: true,
   })
-  async getByUserId() {
-    return this.recipesService.getByUserId();
+  async getByUserId(@Query('userId') userId?: string) {
+    return this.recipesService.getByUserId(userId);
   }
 
   @Get(':id')

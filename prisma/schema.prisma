@@ -29,6 +29,7 @@ model Recipe {
   preparationTime Int?
   cookTime        Int?
   complexity      Int?
+  public          Boolean @default(false)
 }
 
 model Collection {

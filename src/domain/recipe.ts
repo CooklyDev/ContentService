@@ -13,6 +13,7 @@ export class Recipe {
   preparationTime: number | null;
   cookTime: number | null;
   complexity: number | null;
+  isPublic: boolean;
 
   constructor(
     id: string,
@@ -26,6 +27,7 @@ export class Recipe {
     preparationTime: number | null = null,
     cookTime: number | null = null,
     complexity: number | null = null,
+    isPublic = false,
   ) {
     if (!uuidValidate(id)) {
       throw new InvalidInput('recipe.id', 'Invalid UUID');
@@ -44,6 +46,7 @@ export class Recipe {
     this.preparationTime = preparationTime;
     this.cookTime = cookTime;
     this.complexity = complexity;
+    this.isPublic = isPublic;
   }
 
   private static validateComplexity(complexity: number | null): void {
@@ -69,6 +72,7 @@ export class Recipe {
     preparationTime?: number | null,
     cookTime?: number | null,
     complexity?: number | null,
+    isPublic?: boolean,
   ) {
     if (name !== undefined) {
       this.name = name;
@@ -97,6 +101,9 @@ export class Recipe {
     if (complexity !== undefined) {
       Recipe.validateComplexity(complexity);
       this.complexity = complexity;
+    }
+    if (isPublic !== undefined) {
+      this.isPublic = isPublic;
     }
   }
 }

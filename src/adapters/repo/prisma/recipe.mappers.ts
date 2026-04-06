@@ -12,6 +12,7 @@ export type RecipeRow = {
   preparationTime: number | null;
   cookTime: number | null;
   complexity: number | null;
+  public: boolean;
 };
 
 export const recipeSelect = {
@@ -26,6 +27,7 @@ export const recipeSelect = {
   preparationTime: true,
   cookTime: true,
   complexity: true,
+  public: true,
 } as const;
 
 export const toDomain = (row: RecipeRow): Recipe =>
@@ -41,6 +43,7 @@ export const toDomain = (row: RecipeRow): Recipe =>
     row.preparationTime,
     row.cookTime,
     row.complexity,
+    row.public,
   );
 
 export const toPersistence = (entity: Recipe): Omit<RecipeRow, 'id'> => ({
@@ -54,4 +57,5 @@ export const toPersistence = (entity: Recipe): Omit<RecipeRow, 'id'> => ({
   preparationTime: entity.preparationTime,
   cookTime: entity.cookTime,
   complexity: entity.complexity,
+  public: entity.isPublic,
 });

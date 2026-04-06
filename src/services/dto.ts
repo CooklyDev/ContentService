@@ -67,6 +67,14 @@ export class CreateRecipeDto {
     example: 6,
   })
   complexity?: number | null;
+
+  @ApiProperty({
+    description: 'Recipe visibility flag',
+    type: Boolean,
+    required: false,
+    example: false,
+  })
+  isPublic?: boolean;
 }
 
 export class UpdateRecipeDto {
@@ -140,6 +148,14 @@ export class UpdateRecipeDto {
     example: 6,
   })
   complexity?: number | null;
+
+  @ApiProperty({
+    description: 'Recipe visibility flag',
+    type: Boolean,
+    required: false,
+    example: false,
+  })
+  isPublic?: boolean;
 }
 
 export class CreateCollectionDto {
@@ -253,6 +269,13 @@ export class RecipeResponseDto {
     example: 6,
   })
   complexity!: number | null;
+
+  @ApiProperty({
+    description: 'Recipe visibility flag',
+    type: Boolean,
+    example: false,
+  })
+  isPublic!: boolean;
 }
 
 export class CollectionResponseDto {

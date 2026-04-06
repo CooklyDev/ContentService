@@ -89,6 +89,16 @@ export class RecipesService {
     }
   }
 
+  private validateIsPublic(isPublic: boolean | undefined): void {
+    if (isPublic === undefined) {
+      return;
+    }
+
+    if (typeof isPublic !== 'boolean') {
+      throw new InvalidInput('isPublic', 'Invalid recipe visibility flag');
+    }
+  }
+
   async create(data: CreateRecipeDto) {
     this.validateName(data.name);
     this.validateDescription(data.description);
@@ -99,6 +109,7 @@ export class RecipesService {
     this.validateOptionalIntegerField('preparationTime', data.preparationTime);
     this.validateOptionalIntegerField('cookTime', data.cookTime);
     this.validateComplexity(data.complexity);
+    this.validateIsPublic(data.isPublic);
     const userId = await this.getCurrentUserId();
     const recipeId = v4();
     const recipe = new Recipe(
@@ -113,14 +124,21 @@ export class RecipesService {
       data.preparationTime ?? null,
       data.cookTime ?? null,
       data.complexity ?? null,
+      data.isPublic ?? false,
     );
 
     await this.recipeRepository.create(recipe);
   }
 
-  async getByUserId() {
-    const userId = await this.getCurrentUserId();
-    return this.recipeRepository.getByUserId(userId);
+  async getByUserId(targetUserId?: string) {
+    const currentUserId = await this.getCurrentUserId();
+    const userId = targetUserId ?? currentUserId;
+    const isForeignUser = userId !== currentUserId;
+
+    return this.recipeRepository.getByUserId(
+      userId,
+      isForeignUser ? true : undefined,
+    );
   }
 
   async getById(id: string) {
@@ -170,6 +188,9 @@ export class RecipesService {
     if (data.complexity !== undefined) {
       this.validateComplexity(data.complexity);
     }
+    if (data.isPublic !== undefined) {
+      this.validateIsPublic(data.isPublic);
+    }
     const userId = await this.getCurrentUserId();
 
     const currentRecipe = await this.recipeRepository.getById(data.id);
@@ -190,6 +211,7 @@ export class RecipesService {
       data.preparationTime,
       data.cookTime,
       data.complexity,
+      data.isPublic,
     );
 
     await this.recipeRepository.update(currentRecipe);

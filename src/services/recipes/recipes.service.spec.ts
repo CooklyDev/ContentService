@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import {
@@ -15,14 +15,16 @@ describe('RecipesService', () => {
   let getUserIdMock: jest.Mock<() => Promise<string | null>>;
   let createMock: jest.Mock<(data: unknown) => Promise<void>>;
   let getByIdMock: jest.Mock<(id: string) => Promise<Recipe | null>>;
-  let getByUserIdMock: jest.Mock<(userId: string) => Promise<Recipe[]>>;
+  let getByUserIdMock: jest.Mock<
+    (userId: string, isPublic?: boolean) => Promise<Recipe[]>
+  >;
   let updateMock: jest.Mock<(recipe: Recipe) => Promise<void>>;
   let deleteMock: jest.Mock<(id: string) => Promise<void>>;
   let idProvider: { getUserId: () => Promise<string | null> };
   let recipeRepository: {
     create: (data: unknown) => Promise<void>;
     getById: (id: string) => Promise<Recipe | null>;
-    getByUserId: (userId: string) => Promise<Recipe[]>;
+    getByUserId: (userId: string, isPublic?: boolean) => Promise<Recipe[]>;
     update: (recipe: Recipe) => Promise<void>;
     delete: (id: string) => Promise<void>;
   };
@@ -31,7 +33,8 @@ describe('RecipesService', () => {
     getUserIdMock = jest.fn<() => Promise<string | null>>();
     createMock = jest.fn<(data: unknown) => Promise<void>>();
     getByIdMock = jest.fn<(id: string) => Promise<Recipe | null>>();
-    getByUserIdMock = jest.fn<(userId: string) => Promise<Recipe[]>>();
+    getByUserIdMock =
+      jest.fn<(userId: string, isPublic?: boolean) => Promise<Recipe[]>>();
     updateMock = jest.fn<(recipe: Recipe) => Promise<void>>();
     deleteMock = jest.fn<(id: string) => Promise<void>>();
 
@@ -88,6 +91,7 @@ describe('RecipesService', () => {
       preparationTime: 15,
       cookTime: 35,
       complexity: 6,
+      isPublic: true,
     });
 
     // Assert
@@ -105,6 +109,7 @@ describe('RecipesService', () => {
     expect(createdRecipe.preparationTime).toBe(15);
     expect(createdRecipe.cookTime).toBe(35);
     expect(createdRecipe.complexity).toBe(6);
+    expect(createdRecipe.isPublic).toBe(true);
   });
 
   it('should update recipe when current user owns it', async () => {
@@ -132,6 +137,7 @@ describe('RecipesService', () => {
       preparationTime: 20,
       cookTime: 40,
       complexity: 8,
+      isPublic: true,
     });
 
     // Assert
@@ -145,6 +151,7 @@ describe('RecipesService', () => {
     expect(recipe.preparationTime).toBe(20);
     expect(recipe.cookTime).toBe(40);
     expect(recipe.complexity).toBe(8);
+    expect(recipe.isPublic).toBe(true);
   });
 
   it('should return recipes by user id', async () => {
@@ -172,7 +179,36 @@ describe('RecipesService', () => {
     const result = await service.getByUserId();
 
     // Assert
-    expect(getByUserIdMock).toHaveBeenCalledWith('target-user');
+    expect(getByUserIdMock).toHaveBeenCalledWith('target-user', undefined);
+    expect(result).toEqual(recipes);
+  });
+
+  it('should return only public recipes for another user', async () => {
+    // Arrange
+    const recipes = [
+      new Recipe(
+        '77777777-7777-4777-8777-777777777777',
+        'another-user',
+        'Public recipe',
+        null,
+        'Instructions',
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        true,
+      ),
+    ];
+    getUserIdMock.mockResolvedValue('session-id');
+    getByUserIdMock.mockResolvedValue(recipes);
+
+    // Act
+    const result = await service.getByUserId('another-user');
+
+    // Assert
+    expect(getByUserIdMock).toHaveBeenCalledWith('another-user', true);
     expect(result).toEqual(recipes);
   });
 
@@ -417,5 +453,21 @@ describe('RecipesService', () => {
     // Assert
     await expect(action).rejects.toThrow(InvalidInput);
     expect(getByIdMock).not.toHaveBeenCalled();
+  });
+
+  it('should throw when creating recipe with invalid public flag', async () => {
+    // Arrange
+
+    // Act
+    const action = service.create({
+      name: 'Valid name',
+      description: null,
+      instructions: 'Valid instructions',
+      isPublic: 'true' as unknown as boolean,
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(InvalidInput);
+    expect(createMock).not.toHaveBeenCalled();
   });
 });
