@@ -14,37 +14,57 @@ export class CreateRecipeDto {
   @ApiProperty({ description: 'Cooking instructions' })
   instructions!: string;
 
-  @ApiProperty({ description: 'Calories', required: false, nullable: true })
+  @ApiProperty({
+    description: 'Calories',
+    type: Number,
+    required: false,
+    nullable: true,
+    example: 450,
+  })
   calories?: number | null;
 
-  @ApiProperty({ description: 'Proteins', required: false, nullable: true })
+  @ApiProperty({
+    description: 'Proteins',
+    type: Number,
+    required: false,
+    nullable: true,
+    example: 20,
+  })
   proteins?: number | null;
 
   @ApiProperty({
     description: 'Carbohydrates',
+    type: Number,
     required: false,
     nullable: true,
+    example: 35,
   })
   carbohydrates?: number | null;
 
   @ApiProperty({
     description: 'Preparation time in minutes',
+    type: Number,
     required: false,
     nullable: true,
+    example: 15,
   })
   preparationTime?: number | null;
 
   @ApiProperty({
     description: 'Cook time in minutes',
+    type: Number,
     required: false,
     nullable: true,
+    example: 30,
   })
   cookTime?: number | null;
 
   @ApiProperty({
     description: 'Recipe complexity from 1 to 10',
+    type: Number,
     required: false,
     nullable: true,
+    example: 6,
   })
   complexity?: number | null;
 }
@@ -67,37 +87,57 @@ export class UpdateRecipeDto {
   @ApiProperty({ description: 'Cooking instructions', required: false })
   instructions?: string;
 
-  @ApiProperty({ description: 'Calories', required: false, nullable: true })
+  @ApiProperty({
+    description: 'Calories',
+    type: Number,
+    required: false,
+    nullable: true,
+    example: 450,
+  })
   calories?: number | null;
 
-  @ApiProperty({ description: 'Proteins', required: false, nullable: true })
+  @ApiProperty({
+    description: 'Proteins',
+    type: Number,
+    required: false,
+    nullable: true,
+    example: 20,
+  })
   proteins?: number | null;
 
   @ApiProperty({
     description: 'Carbohydrates',
+    type: Number,
     required: false,
     nullable: true,
+    example: 35,
   })
   carbohydrates?: number | null;
 
   @ApiProperty({
     description: 'Preparation time in minutes',
+    type: Number,
     required: false,
     nullable: true,
+    example: 15,
   })
   preparationTime?: number | null;
 
   @ApiProperty({
     description: 'Cook time in minutes',
+    type: Number,
     required: false,
     nullable: true,
+    example: 30,
   })
   cookTime?: number | null;
 
   @ApiProperty({
     description: 'Recipe complexity from 1 to 10',
+    type: Number,
     required: false,
     nullable: true,
+    example: 6,
   })
   complexity?: number | null;
 }
@@ -166,30 +206,51 @@ export class RecipeResponseDto {
   @ApiProperty({ description: 'Cooking instructions' })
   instructions!: string;
 
-  @ApiProperty({ description: 'Calories', nullable: true })
+  @ApiProperty({
+    description: 'Calories',
+    type: Number,
+    nullable: true,
+    example: 450,
+  })
   calories!: number | null;
 
-  @ApiProperty({ description: 'Proteins', nullable: true })
+  @ApiProperty({
+    description: 'Proteins',
+    type: Number,
+    nullable: true,
+    example: 20,
+  })
   proteins!: number | null;
 
-  @ApiProperty({ description: 'Carbohydrates', nullable: true })
+  @ApiProperty({
+    description: 'Carbohydrates',
+    type: Number,
+    nullable: true,
+    example: 35,
+  })
   carbohydrates!: number | null;
 
   @ApiProperty({
     description: 'Preparation time in minutes',
+    type: Number,
     nullable: true,
+    example: 15,
   })
   preparationTime!: number | null;
 
   @ApiProperty({
     description: 'Cook time in minutes',
+    type: Number,
     nullable: true,
+    example: 30,
   })
   cookTime!: number | null;
 
   @ApiProperty({
     description: 'Recipe complexity from 1 to 10',
+    type: Number,
     nullable: true,
+    example: 6,
   })
   complexity!: number | null;
 }
