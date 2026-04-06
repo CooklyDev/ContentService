@@ -23,6 +23,9 @@ describe('CollectionsService', () => {
   let addRecipeToCollectionMock: jest.Mock<
     (collectionId: string, recipeId: string) => Promise<void>
   >;
+  let removeRecipeFromCollectionMock: jest.Mock<
+    (collectionId: string, recipeId: string) => Promise<void>
+  >;
   let getRecipeByIdMock: jest.Mock<(id: string) => Promise<Recipe | null>>;
 
   beforeEach(async () => {
@@ -30,6 +33,8 @@ describe('CollectionsService', () => {
     getCollectionByIdMock =
       jest.fn<(id: string) => Promise<Collection | null>>();
     addRecipeToCollectionMock =
+      jest.fn<(collectionId: string, recipeId: string) => Promise<void>>();
+    removeRecipeFromCollectionMock =
       jest.fn<(collectionId: string, recipeId: string) => Promise<void>>();
     getRecipeByIdMock = jest.fn<(id: string) => Promise<Recipe | null>>();
 
@@ -47,7 +52,7 @@ describe('CollectionsService', () => {
           useValue: {
             getById: getCollectionByIdMock,
             addRecipeToCollection: addRecipeToCollectionMock,
-            removeRecipeFromCollection: jest.fn(),
+            removeRecipeFromCollection: removeRecipeFromCollectionMock,
             removeRecipeFromForeignCollections: jest.fn(),
             getByUserId: jest.fn(),
             create: jest.fn(),
@@ -226,5 +231,64 @@ describe('CollectionsService', () => {
     // Assert
     await expect(action).rejects.toThrow(TargetNotFountError);
     expect(addRecipeToCollectionMock).not.toHaveBeenCalled();
+  });
+
+  it('throws not found error when removing absent recipe from collection', async () => {
+    // Arrange
+    const collectionId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+    const recipeId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+    const collection = new Collection(
+      collectionId,
+      'user-id',
+      'Collection name',
+      null,
+      [],
+    );
+
+    getUserIdMock.mockResolvedValue('user-id');
+    getCollectionByIdMock.mockResolvedValue(collection);
+
+    // Act
+    const action = service.removeRecipeFromCollection({
+      collectionId,
+      recipeId,
+    });
+
+    // Assert
+    await expect(action).rejects.toThrow(TargetNotFountError);
+    expect(removeRecipeFromCollectionMock).not.toHaveBeenCalled();
+  });
+
+  it('removes recipe when it exists in collection', async () => {
+    // Arrange
+    const collectionId = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+    const recipeId = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+    const recipe = new Recipe(
+      recipeId,
+      'user-id',
+      'Recipe name',
+      null,
+      'Recipe instructions',
+    );
+    const collection = new Collection(
+      collectionId,
+      'user-id',
+      'Collection name',
+      null,
+      [recipe],
+    );
+
+    getUserIdMock.mockResolvedValue('user-id');
+    getCollectionByIdMock.mockResolvedValue(collection);
+    removeRecipeFromCollectionMock.mockResolvedValue();
+
+    // Act
+    await service.removeRecipeFromCollection({ collectionId, recipeId });
+
+    // Assert
+    expect(removeRecipeFromCollectionMock).toHaveBeenCalledWith(
+      collectionId,
+      recipeId,
+    );
   });
 });

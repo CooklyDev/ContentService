@@ -197,6 +197,12 @@ export class CollectionsService {
     if (collection.userId !== userId) {
       throw new TargetNotFountError('collection', 'Collection not found');
     }
+    const hasRecipe = collection.recipes.some(
+      (item) => item.id === data.recipeId,
+    );
+    if (!hasRecipe) {
+      throw new TargetNotFountError('recipe', 'Recipe not found in collection');
+    }
 
     await this.collectionRepository.removeRecipeFromCollection(
       data.collectionId,
