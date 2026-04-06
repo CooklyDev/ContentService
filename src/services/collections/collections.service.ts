@@ -163,8 +163,13 @@ export class CollectionsService {
     if (!recipe) {
       throw new TargetNotFountError('recipe', 'Recipe not found');
     }
+    if (recipe.userId !== userId && !recipe.isPublic) {
+      throw new TargetNotFountError('recipe', 'Recipe not found');
+    }
 
-    const hasRecipe = collection.recipes.some((item) => item.id === data.recipeId);
+    const hasRecipe = collection.recipes.some(
+      (item) => item.id === data.recipeId,
+    );
     if (hasRecipe) {
       throw new TargetAlreadyExists('Recipe already exists in collection');
     }

@@ -6,6 +6,10 @@ export interface CollectionRepository {
   create(data: Collection): Promise<void>;
   update(data: Collection): Promise<void>;
   delete(id: string): Promise<void>;
+  removeRecipeFromForeignCollections(
+    recipeId: string,
+    ownerId: string,
+  ): Promise<void>;
   addRecipeToCollection(collectionId: string, recipeId: string): Promise<void>;
   removeRecipeFromCollection(
     collectionId: string,

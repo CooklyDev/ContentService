@@ -8,7 +8,11 @@ import {
 } from '../../domain/error.js';
 import { Recipe } from '../../domain/recipe.js';
 import { RecipesService } from './recipes.service.js';
-import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens.js';
+import {
+  COLLECTION_REPOSITORY,
+  ID_PROVIDER,
+  RECIPE_REPOSITORY,
+} from '../interfaces/tokens.js';
 
 describe('RecipesService', () => {
   let service: RecipesService;
@@ -20,6 +24,9 @@ describe('RecipesService', () => {
   >;
   let updateMock: jest.Mock<(recipe: Recipe) => Promise<void>>;
   let deleteMock: jest.Mock<(id: string) => Promise<void>>;
+  let removeRecipeFromForeignCollectionsMock: jest.Mock<
+    (recipeId: string, ownerId: string) => Promise<void>
+  >;
   let idProvider: { getUserId: () => Promise<string | null> };
   let recipeRepository: {
     create: (data: unknown) => Promise<void>;
@@ -37,6 +44,8 @@ describe('RecipesService', () => {
       jest.fn<(userId: string, isPublic?: boolean) => Promise<Recipe[]>>();
     updateMock = jest.fn<(recipe: Recipe) => Promise<void>>();
     deleteMock = jest.fn<(id: string) => Promise<void>>();
+    removeRecipeFromForeignCollectionsMock =
+      jest.fn<(recipeId: string, ownerId: string) => Promise<void>>();
 
     idProvider = {
       getUserId: getUserIdMock,
@@ -59,6 +68,13 @@ describe('RecipesService', () => {
         {
           provide: RECIPE_REPOSITORY,
           useValue: recipeRepository,
+        },
+        {
+          provide: COLLECTION_REPOSITORY,
+          useValue: {
+            removeRecipeFromForeignCollections:
+              removeRecipeFromForeignCollectionsMock,
+          },
         },
       ],
     }).compile();
@@ -152,6 +168,43 @@ describe('RecipesService', () => {
     expect(recipe.cookTime).toBe(40);
     expect(recipe.complexity).toBe(8);
     expect(recipe.isPublic).toBe(true);
+    expect(removeRecipeFromForeignCollectionsMock).not.toHaveBeenCalled();
+  });
+
+  it('should remove recipe from foreign collections when it becomes private', async () => {
+    // Arrange
+    const recipe = new Recipe(
+      '12121212-1212-4212-8212-121212121212',
+      'session-id',
+      'Recipe name',
+      'Description',
+      'Instructions',
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      true,
+    );
+    getUserIdMock.mockResolvedValue('session-id');
+    getByIdMock.mockResolvedValue(recipe);
+    updateMock.mockResolvedValue();
+    removeRecipeFromForeignCollectionsMock.mockResolvedValue();
+
+    // Act
+    await service.update({
+      id: '12121212-1212-4212-8212-121212121212',
+      isPublic: false,
+    });
+
+    // Assert
+    expect(updateMock).toHaveBeenCalledWith(recipe);
+    expect(recipe.isPublic).toBe(false);
+    expect(removeRecipeFromForeignCollectionsMock).toHaveBeenCalledWith(
+      '12121212-1212-4212-8212-121212121212',
+      'session-id',
+    );
   });
 
   it('should return recipes by user id', async () => {

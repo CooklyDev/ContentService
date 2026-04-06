@@ -18,7 +18,7 @@ datasource db {
 }
 
 model Recipe {
-  id              String @id
+  id              String             @id
   userId          String
   name            String
   description     String?
@@ -29,11 +29,12 @@ model Recipe {
   preparationTime Int?
   cookTime        Int?
   complexity      Int?
-  public          Boolean @default(false)
+  public          Boolean            @default(false)
+  collections     CollectionRecipe[]
 }
 
 model Collection {
-  id          String @id
+  id          String             @id
   userId      String
   name        String
   description String?
@@ -44,6 +45,7 @@ model CollectionRecipe {
   collectionId String
   recipeId     String
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@id([collectionId, recipeId])
 }

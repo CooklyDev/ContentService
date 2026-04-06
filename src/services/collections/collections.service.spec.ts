@@ -17,7 +17,9 @@ import {
 describe('CollectionsService', () => {
   let service: CollectionsService;
   let getUserIdMock: jest.Mock<() => Promise<string | null>>;
-  let getCollectionByIdMock: jest.Mock<(id: string) => Promise<Collection | null>>;
+  let getCollectionByIdMock: jest.Mock<
+    (id: string) => Promise<Collection | null>
+  >;
   let addRecipeToCollectionMock: jest.Mock<
     (collectionId: string, recipeId: string) => Promise<void>
   >;
@@ -25,10 +27,10 @@ describe('CollectionsService', () => {
 
   beforeEach(async () => {
     getUserIdMock = jest.fn<() => Promise<string | null>>();
-    getCollectionByIdMock = jest.fn<(id: string) => Promise<Collection | null>>();
-    addRecipeToCollectionMock = jest.fn<
-      (collectionId: string, recipeId: string) => Promise<void>
-    >();
+    getCollectionByIdMock =
+      jest.fn<(id: string) => Promise<Collection | null>>();
+    addRecipeToCollectionMock =
+      jest.fn<(collectionId: string, recipeId: string) => Promise<void>>();
     getRecipeByIdMock = jest.fn<(id: string) => Promise<Recipe | null>>();
 
     const module: TestingModule = await Test.createTestingModule({
@@ -45,6 +47,12 @@ describe('CollectionsService', () => {
           useValue: {
             getById: getCollectionByIdMock,
             addRecipeToCollection: addRecipeToCollectionMock,
+            removeRecipeFromCollection: jest.fn(),
+            removeRecipeFromForeignCollections: jest.fn(),
+            getByUserId: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
           },
         },
         {
@@ -118,7 +126,10 @@ describe('CollectionsService', () => {
     await service.addRecipeToCollection({ collectionId, recipeId });
 
     // Assert
-    expect(addRecipeToCollectionMock).toHaveBeenCalledWith(collectionId, recipeId);
+    expect(addRecipeToCollectionMock).toHaveBeenCalledWith(
+      collectionId,
+      recipeId,
+    );
   });
 
   it('throws not found error when recipe does not exist', async () => {
@@ -136,6 +147,78 @@ describe('CollectionsService', () => {
     getUserIdMock.mockResolvedValue('user-id');
     getCollectionByIdMock.mockResolvedValue(collection);
     getRecipeByIdMock.mockResolvedValue(null);
+
+    // Act
+    const action = service.addRecipeToCollection({ collectionId, recipeId });
+
+    // Assert
+    await expect(action).rejects.toThrow(TargetNotFountError);
+    expect(addRecipeToCollectionMock).not.toHaveBeenCalled();
+  });
+
+  it('adds public recipe of another user to collection', async () => {
+    // Arrange
+    const collectionId = '77777777-7777-4777-8777-777777777777';
+    const recipeId = '88888888-8888-4888-8888-888888888888';
+    const collection = new Collection(
+      collectionId,
+      'user-id',
+      'Collection name',
+      null,
+      [],
+    );
+    const recipe = new Recipe(
+      recipeId,
+      'another-user',
+      'Recipe name',
+      null,
+      'Recipe instructions',
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      true,
+    );
+
+    getUserIdMock.mockResolvedValue('user-id');
+    getCollectionByIdMock.mockResolvedValue(collection);
+    getRecipeByIdMock.mockResolvedValue(recipe);
+    addRecipeToCollectionMock.mockResolvedValue();
+
+    // Act
+    await service.addRecipeToCollection({ collectionId, recipeId });
+
+    // Assert
+    expect(addRecipeToCollectionMock).toHaveBeenCalledWith(
+      collectionId,
+      recipeId,
+    );
+  });
+
+  it('throws not found error when recipe of another user is private', async () => {
+    // Arrange
+    const collectionId = '99999999-9999-4999-8999-999999999999';
+    const recipeId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    const collection = new Collection(
+      collectionId,
+      'user-id',
+      'Collection name',
+      null,
+      [],
+    );
+    const recipe = new Recipe(
+      recipeId,
+      'another-user',
+      'Recipe name',
+      null,
+      'Recipe instructions',
+    );
+
+    getUserIdMock.mockResolvedValue('user-id');
+    getCollectionByIdMock.mockResolvedValue(collection);
+    getRecipeByIdMock.mockResolvedValue(recipe);
 
     // Act
     const action = service.addRecipeToCollection({ collectionId, recipeId });

@@ -10,8 +10,13 @@ import {
 import { Recipe } from '../../domain/recipe.js';
 import { CreateRecipeDto, UpdateRecipeDto } from '../dto.js';
 import type { IdProvider } from '../interfaces/common.js';
+import type { CollectionRepository } from '../interfaces/repos/collections.interface.js';
 import type { RecipeRepository } from '../interfaces/repos/recipes.interface.js';
-import { ID_PROVIDER, RECIPE_REPOSITORY } from '../interfaces/tokens.js';
+import {
+  COLLECTION_REPOSITORY,
+  ID_PROVIDER,
+  RECIPE_REPOSITORY,
+} from '../interfaces/tokens.js';
 
 @Injectable()
 export class RecipesService {
@@ -19,6 +24,8 @@ export class RecipesService {
     @Inject(ID_PROVIDER) private readonly idProvider: IdProvider,
     @Inject(RECIPE_REPOSITORY)
     private readonly recipeRepository: RecipeRepository,
+    @Inject(COLLECTION_REPOSITORY)
+    private readonly collectionRepository: CollectionRepository,
   ) {}
 
   private async getCurrentUserId(): Promise<string> {
@@ -201,6 +208,9 @@ export class RecipesService {
       throw new TargetNotFountError('recipe', 'Recipe not found');
     }
 
+    const becamePrivate =
+      currentRecipe.isPublic === true && data.isPublic === false;
+
     currentRecipe.update(
       data.name,
       data.description,
@@ -215,6 +225,13 @@ export class RecipesService {
     );
 
     await this.recipeRepository.update(currentRecipe);
+
+    if (becamePrivate) {
+      await this.collectionRepository.removeRecipeFromForeignCollections(
+        currentRecipe.id,
+        userId,
+      );
+    }
   }
   async delete(id: string) {
     this.validateId(id);

@@ -73,6 +73,22 @@ export class PrismaCollectionRepository implements CollectionRepository {
     });
   }
 
+  async removeRecipeFromForeignCollections(
+    recipeId: string,
+    ownerId: string,
+  ): Promise<void> {
+    await this.prisma.collectionRecipe.deleteMany({
+      where: {
+        recipeId,
+        collection: {
+          userId: {
+            not: ownerId,
+          },
+        },
+      },
+    });
+  }
+
   async addRecipeToCollection(
     collectionId: string,
     recipeId: string,

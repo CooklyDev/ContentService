@@ -159,12 +159,14 @@ export type CollectionRecipeWhereInput = {
   collectionId?: Prisma.StringFilter<"CollectionRecipe"> | string
   recipeId?: Prisma.StringFilter<"CollectionRecipe"> | string
   collection?: Prisma.XOR<Prisma.CollectionScalarRelationFilter, Prisma.CollectionWhereInput>
+  recipe?: Prisma.XOR<Prisma.RecipeScalarRelationFilter, Prisma.RecipeWhereInput>
 }
 
 export type CollectionRecipeOrderByWithRelationInput = {
   collectionId?: Prisma.SortOrder
   recipeId?: Prisma.SortOrder
   collection?: Prisma.CollectionOrderByWithRelationInput
+  recipe?: Prisma.RecipeOrderByWithRelationInput
 }
 
 export type CollectionRecipeWhereUniqueInput = Prisma.AtLeast<{
@@ -175,6 +177,7 @@ export type CollectionRecipeWhereUniqueInput = Prisma.AtLeast<{
   collectionId?: Prisma.StringFilter<"CollectionRecipe"> | string
   recipeId?: Prisma.StringFilter<"CollectionRecipe"> | string
   collection?: Prisma.XOR<Prisma.CollectionScalarRelationFilter, Prisma.CollectionWhereInput>
+  recipe?: Prisma.XOR<Prisma.RecipeScalarRelationFilter, Prisma.RecipeWhereInput>
 }, "collectionId_recipeId">
 
 export type CollectionRecipeOrderByWithAggregationInput = {
@@ -194,8 +197,8 @@ export type CollectionRecipeScalarWhereWithAggregatesInput = {
 }
 
 export type CollectionRecipeCreateInput = {
-  recipeId: string
   collection: Prisma.CollectionCreateNestedOneWithoutRecipesInput
+  recipe: Prisma.RecipeCreateNestedOneWithoutCollectionsInput
 }
 
 export type CollectionRecipeUncheckedCreateInput = {
@@ -204,8 +207,8 @@ export type CollectionRecipeUncheckedCreateInput = {
 }
 
 export type CollectionRecipeUpdateInput = {
-  recipeId?: Prisma.StringFieldUpdateOperationsInput | string
   collection?: Prisma.CollectionUpdateOneRequiredWithoutRecipesNestedInput
+  recipe?: Prisma.RecipeUpdateOneRequiredWithoutCollectionsNestedInput
 }
 
 export type CollectionRecipeUncheckedUpdateInput = {
@@ -219,7 +222,7 @@ export type CollectionRecipeCreateManyInput = {
 }
 
 export type CollectionRecipeUpdateManyMutationInput = {
-  recipeId?: Prisma.StringFieldUpdateOperationsInput | string
+
 }
 
 export type CollectionRecipeUncheckedUpdateManyInput = {
@@ -255,6 +258,48 @@ export type CollectionRecipeMaxOrderByAggregateInput = {
 export type CollectionRecipeMinOrderByAggregateInput = {
   collectionId?: Prisma.SortOrder
   recipeId?: Prisma.SortOrder
+}
+
+export type CollectionRecipeCreateNestedManyWithoutRecipeInput = {
+  create?: Prisma.XOR<Prisma.CollectionRecipeCreateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput> | Prisma.CollectionRecipeCreateWithoutRecipeInput[] | Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput[]
+  connectOrCreate?: Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput | Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput[]
+  createMany?: Prisma.CollectionRecipeCreateManyRecipeInputEnvelope
+  connect?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+}
+
+export type CollectionRecipeUncheckedCreateNestedManyWithoutRecipeInput = {
+  create?: Prisma.XOR<Prisma.CollectionRecipeCreateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput> | Prisma.CollectionRecipeCreateWithoutRecipeInput[] | Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput[]
+  connectOrCreate?: Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput | Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput[]
+  createMany?: Prisma.CollectionRecipeCreateManyRecipeInputEnvelope
+  connect?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+}
+
+export type CollectionRecipeUpdateManyWithoutRecipeNestedInput = {
+  create?: Prisma.XOR<Prisma.CollectionRecipeCreateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput> | Prisma.CollectionRecipeCreateWithoutRecipeInput[] | Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput[]
+  connectOrCreate?: Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput | Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput[]
+  upsert?: Prisma.CollectionRecipeUpsertWithWhereUniqueWithoutRecipeInput | Prisma.CollectionRecipeUpsertWithWhereUniqueWithoutRecipeInput[]
+  createMany?: Prisma.CollectionRecipeCreateManyRecipeInputEnvelope
+  set?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  disconnect?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  delete?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  connect?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  update?: Prisma.CollectionRecipeUpdateWithWhereUniqueWithoutRecipeInput | Prisma.CollectionRecipeUpdateWithWhereUniqueWithoutRecipeInput[]
+  updateMany?: Prisma.CollectionRecipeUpdateManyWithWhereWithoutRecipeInput | Prisma.CollectionRecipeUpdateManyWithWhereWithoutRecipeInput[]
+  deleteMany?: Prisma.CollectionRecipeScalarWhereInput | Prisma.CollectionRecipeScalarWhereInput[]
+}
+
+export type CollectionRecipeUncheckedUpdateManyWithoutRecipeNestedInput = {
+  create?: Prisma.XOR<Prisma.CollectionRecipeCreateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput> | Prisma.CollectionRecipeCreateWithoutRecipeInput[] | Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput[]
+  connectOrCreate?: Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput | Prisma.CollectionRecipeCreateOrConnectWithoutRecipeInput[]
+  upsert?: Prisma.CollectionRecipeUpsertWithWhereUniqueWithoutRecipeInput | Prisma.CollectionRecipeUpsertWithWhereUniqueWithoutRecipeInput[]
+  createMany?: Prisma.CollectionRecipeCreateManyRecipeInputEnvelope
+  set?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  disconnect?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  delete?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  connect?: Prisma.CollectionRecipeWhereUniqueInput | Prisma.CollectionRecipeWhereUniqueInput[]
+  update?: Prisma.CollectionRecipeUpdateWithWhereUniqueWithoutRecipeInput | Prisma.CollectionRecipeUpdateWithWhereUniqueWithoutRecipeInput[]
+  updateMany?: Prisma.CollectionRecipeUpdateManyWithWhereWithoutRecipeInput | Prisma.CollectionRecipeUpdateManyWithWhereWithoutRecipeInput[]
+  deleteMany?: Prisma.CollectionRecipeScalarWhereInput | Prisma.CollectionRecipeScalarWhereInput[]
 }
 
 export type CollectionRecipeCreateNestedManyWithoutCollectionInput = {
@@ -299,8 +344,50 @@ export type CollectionRecipeUncheckedUpdateManyWithoutCollectionNestedInput = {
   deleteMany?: Prisma.CollectionRecipeScalarWhereInput | Prisma.CollectionRecipeScalarWhereInput[]
 }
 
+export type CollectionRecipeCreateWithoutRecipeInput = {
+  collection: Prisma.CollectionCreateNestedOneWithoutRecipesInput
+}
+
+export type CollectionRecipeUncheckedCreateWithoutRecipeInput = {
+  collectionId: string
+}
+
+export type CollectionRecipeCreateOrConnectWithoutRecipeInput = {
+  where: Prisma.CollectionRecipeWhereUniqueInput
+  create: Prisma.XOR<Prisma.CollectionRecipeCreateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput>
+}
+
+export type CollectionRecipeCreateManyRecipeInputEnvelope = {
+  data: Prisma.CollectionRecipeCreateManyRecipeInput | Prisma.CollectionRecipeCreateManyRecipeInput[]
+  skipDuplicates?: boolean
+}
+
+export type CollectionRecipeUpsertWithWhereUniqueWithoutRecipeInput = {
+  where: Prisma.CollectionRecipeWhereUniqueInput
+  update: Prisma.XOR<Prisma.CollectionRecipeUpdateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedUpdateWithoutRecipeInput>
+  create: Prisma.XOR<Prisma.CollectionRecipeCreateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedCreateWithoutRecipeInput>
+}
+
+export type CollectionRecipeUpdateWithWhereUniqueWithoutRecipeInput = {
+  where: Prisma.CollectionRecipeWhereUniqueInput
+  data: Prisma.XOR<Prisma.CollectionRecipeUpdateWithoutRecipeInput, Prisma.CollectionRecipeUncheckedUpdateWithoutRecipeInput>
+}
+
+export type CollectionRecipeUpdateManyWithWhereWithoutRecipeInput = {
+  where: Prisma.CollectionRecipeScalarWhereInput
+  data: Prisma.XOR<Prisma.CollectionRecipeUpdateManyMutationInput, Prisma.CollectionRecipeUncheckedUpdateManyWithoutRecipeInput>
+}
+
+export type CollectionRecipeScalarWhereInput = {
+  AND?: Prisma.CollectionRecipeScalarWhereInput | Prisma.CollectionRecipeScalarWhereInput[]
+  OR?: Prisma.CollectionRecipeScalarWhereInput[]
+  NOT?: Prisma.CollectionRecipeScalarWhereInput | Prisma.CollectionRecipeScalarWhereInput[]
+  collectionId?: Prisma.StringFilter<"CollectionRecipe"> | string
+  recipeId?: Prisma.StringFilter<"CollectionRecipe"> | string
+}
+
 export type CollectionRecipeCreateWithoutCollectionInput = {
-  recipeId: string
+  recipe: Prisma.RecipeCreateNestedOneWithoutCollectionsInput
 }
 
 export type CollectionRecipeUncheckedCreateWithoutCollectionInput = {
@@ -333,12 +420,20 @@ export type CollectionRecipeUpdateManyWithWhereWithoutCollectionInput = {
   data: Prisma.XOR<Prisma.CollectionRecipeUpdateManyMutationInput, Prisma.CollectionRecipeUncheckedUpdateManyWithoutCollectionInput>
 }
 
-export type CollectionRecipeScalarWhereInput = {
-  AND?: Prisma.CollectionRecipeScalarWhereInput | Prisma.CollectionRecipeScalarWhereInput[]
-  OR?: Prisma.CollectionRecipeScalarWhereInput[]
-  NOT?: Prisma.CollectionRecipeScalarWhereInput | Prisma.CollectionRecipeScalarWhereInput[]
-  collectionId?: Prisma.StringFilter<"CollectionRecipe"> | string
-  recipeId?: Prisma.StringFilter<"CollectionRecipe"> | string
+export type CollectionRecipeCreateManyRecipeInput = {
+  collectionId: string
+}
+
+export type CollectionRecipeUpdateWithoutRecipeInput = {
+  collection?: Prisma.CollectionUpdateOneRequiredWithoutRecipesNestedInput
+}
+
+export type CollectionRecipeUncheckedUpdateWithoutRecipeInput = {
+  collectionId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type CollectionRecipeUncheckedUpdateManyWithoutRecipeInput = {
+  collectionId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type CollectionRecipeCreateManyCollectionInput = {
@@ -346,7 +441,7 @@ export type CollectionRecipeCreateManyCollectionInput = {
 }
 
 export type CollectionRecipeUpdateWithoutCollectionInput = {
-  recipeId?: Prisma.StringFieldUpdateOperationsInput | string
+  recipe?: Prisma.RecipeUpdateOneRequiredWithoutCollectionsNestedInput
 }
 
 export type CollectionRecipeUncheckedUpdateWithoutCollectionInput = {
@@ -363,18 +458,21 @@ export type CollectionRecipeSelect<ExtArgs extends runtime.Types.Extensions.Inte
   collectionId?: boolean
   recipeId?: boolean
   collection?: boolean | Prisma.CollectionDefaultArgs<ExtArgs>
+  recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["collectionRecipe"]>
 
 export type CollectionRecipeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   collectionId?: boolean
   recipeId?: boolean
   collection?: boolean | Prisma.CollectionDefaultArgs<ExtArgs>
+  recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["collectionRecipe"]>
 
 export type CollectionRecipeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   collectionId?: boolean
   recipeId?: boolean
   collection?: boolean | Prisma.CollectionDefaultArgs<ExtArgs>
+  recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["collectionRecipe"]>
 
 export type CollectionRecipeSelectScalar = {
@@ -385,18 +483,22 @@ export type CollectionRecipeSelectScalar = {
 export type CollectionRecipeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"collectionId" | "recipeId", ExtArgs["result"]["collectionRecipe"]>
 export type CollectionRecipeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   collection?: boolean | Prisma.CollectionDefaultArgs<ExtArgs>
+  recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>
 }
 export type CollectionRecipeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   collection?: boolean | Prisma.CollectionDefaultArgs<ExtArgs>
+  recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>
 }
 export type CollectionRecipeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   collection?: boolean | Prisma.CollectionDefaultArgs<ExtArgs>
+  recipe?: boolean | Prisma.RecipeDefaultArgs<ExtArgs>
 }
 
 export type $CollectionRecipePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CollectionRecipe"
   objects: {
     collection: Prisma.$CollectionPayload<ExtArgs>
+    recipe: Prisma.$RecipePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     collectionId: string
@@ -796,6 +898,7 @@ readonly fields: CollectionRecipeFieldRefs;
 export interface Prisma__CollectionRecipeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   collection<T extends Prisma.CollectionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CollectionDefaultArgs<ExtArgs>>): Prisma.Prisma__CollectionClient<runtime.Types.Result.GetResult<Prisma.$CollectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  recipe<T extends Prisma.RecipeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecipeDefaultArgs<ExtArgs>>): Prisma.Prisma__RecipeClient<runtime.Types.Result.GetResult<Prisma.$RecipePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
