@@ -12,6 +12,7 @@ import {
   COLLECTION_REPOSITORY,
   ID_PROVIDER,
   RECIPE_REPOSITORY,
+  TRANSACTION_MANAGER,
 } from '../interfaces/tokens.js';
 
 describe('RecipesService', () => {
@@ -26,6 +27,9 @@ describe('RecipesService', () => {
   let deleteMock: jest.Mock<(id: string) => Promise<void>>;
   let removeRecipeFromForeignCollectionsMock: jest.Mock<
     (recipeId: string, ownerId: string) => Promise<void>
+  >;
+  let runInTransactionMock: jest.Mock<
+    <T>(operation: () => Promise<T>) => Promise<T>
   >;
   let idProvider: { getUserId: () => Promise<string | null> };
   let recipeRepository: {
@@ -46,6 +50,9 @@ describe('RecipesService', () => {
     deleteMock = jest.fn<(id: string) => Promise<void>>();
     removeRecipeFromForeignCollectionsMock =
       jest.fn<(recipeId: string, ownerId: string) => Promise<void>>();
+    runInTransactionMock = jest.fn<
+      <T>(operation: () => Promise<T>) => Promise<T>
+    >((operation) => operation());
 
     idProvider = {
       getUserId: getUserIdMock,
@@ -74,6 +81,12 @@ describe('RecipesService', () => {
           useValue: {
             removeRecipeFromForeignCollections:
               removeRecipeFromForeignCollectionsMock,
+          },
+        },
+        {
+          provide: TRANSACTION_MANAGER,
+          useValue: {
+            runInTransaction: runInTransactionMock,
           },
         },
       ],
@@ -157,6 +170,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
+    expect(runInTransactionMock).toHaveBeenCalledTimes(1);
     expect(updateMock).toHaveBeenCalledWith(recipe);
     expect(recipe.name).toBe('New name');
     expect(recipe.description).toBe('New description');
@@ -199,6 +213,7 @@ describe('RecipesService', () => {
     });
 
     // Assert
+    expect(runInTransactionMock).toHaveBeenCalledTimes(1);
     expect(updateMock).toHaveBeenCalledWith(recipe);
     expect(recipe.isPublic).toBe(false);
     expect(removeRecipeFromForeignCollectionsMock).toHaveBeenCalledWith(
@@ -289,7 +304,35 @@ describe('RecipesService', () => {
     expect(result).toBe(recipe);
   });
 
-  it('should throw when getting recipe by id of another user', async () => {
+  it('should return public recipe by id for another user', async () => {
+    // Arrange
+    const recipe = new Recipe(
+      '66666666-6666-4666-8666-666666666666',
+      'another-user',
+      'Recipe name',
+      null,
+      'Instructions',
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      true,
+    );
+    getUserIdMock.mockResolvedValue('session-id');
+    getByIdMock.mockResolvedValue(recipe);
+
+    // Act
+    const result = await service.getById(
+      '66666666-6666-4666-8666-666666666666',
+    );
+
+    // Assert
+    expect(result).toBe(recipe);
+  });
+
+  it('should throw when getting private recipe by id of another user', async () => {
     // Arrange
     const recipe = new Recipe(
       '66666666-6666-4666-8666-666666666666',

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '../../generated/prisma/client.js';
 import {
   collectionSelect,
   type CollectionRow,
@@ -14,16 +13,19 @@ import {
   type RecipeRow,
   toDomain as recipeToDomain,
 } from './recipe.mappers.js';
+import { PrismaClientProvider } from './prisma-client.provider.js';
 
 @Injectable()
 export class PrismaCollectionRepository implements CollectionRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prismaClientProvider: PrismaClientProvider) {}
 
   async getById(id: string): Promise<Collection | null> {
-    const collection = (await this.prisma.collection.findUnique({
-      where: { id: id },
-      select: collectionSelect,
-    })) as CollectionRow | null;
+    const collection = (await this.prismaClientProvider
+      .getClient()
+      .collection.findUnique({
+        where: { id: id },
+        select: collectionSelect,
+      })) as CollectionRow | null;
 
     if (!collection) {
       return null;
@@ -37,10 +39,12 @@ export class PrismaCollectionRepository implements CollectionRepository {
   }
 
   async getByUserId(userId: string): Promise<Collection[]> {
-    const collections = (await this.prisma.collection.findMany({
-      where: { userId: userId },
-      select: collectionSelect,
-    })) as CollectionRow[];
+    const collections = (await this.prismaClientProvider
+      .getClient()
+      .collection.findMany({
+        where: { userId: userId },
+        select: collectionSelect,
+      })) as CollectionRow[];
 
     const allRecipeIds = [
       ...new Set(collections.flatMap((c) => c.recipes.map((r) => r.recipeId))),
@@ -52,7 +56,7 @@ export class PrismaCollectionRepository implements CollectionRepository {
   }
 
   async create(data: Collection): Promise<void> {
-    await this.prisma.collection.create({
+    await this.prismaClientProvider.getClient().collection.create({
       data: {
         id: data.id,
         ...toPersistence(data),
@@ -61,14 +65,14 @@ export class PrismaCollectionRepository implements CollectionRepository {
   }
 
   async update(data: Collection): Promise<void> {
-    await this.prisma.collection.update({
+    await this.prismaClientProvider.getClient().collection.update({
       where: { id: data.id },
       data: toPersistence(data),
     });
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.collection.delete({
+    await this.prismaClientProvider.getClient().collection.delete({
       where: { id: id },
     });
   }
@@ -77,7 +81,7 @@ export class PrismaCollectionRepository implements CollectionRepository {
     recipeId: string,
     ownerId: string,
   ): Promise<void> {
-    await this.prisma.collectionRecipe.deleteMany({
+    await this.prismaClientProvider.getClient().collectionRecipe.deleteMany({
       where: {
         recipeId,
         collection: {
@@ -93,7 +97,7 @@ export class PrismaCollectionRepository implements CollectionRepository {
     collectionId: string,
     recipeId: string,
   ): Promise<void> {
-    await this.prisma.collectionRecipe.create({
+    await this.prismaClientProvider.getClient().collectionRecipe.create({
       data: {
         collectionId,
         recipeId,
@@ -105,7 +109,7 @@ export class PrismaCollectionRepository implements CollectionRepository {
     collectionId: string,
     recipeId: string,
   ): Promise<void> {
-    await this.prisma.collectionRecipe.delete({
+    await this.prismaClientProvider.getClient().collectionRecipe.delete({
       where: {
         collectionId_recipeId: {
           collectionId,
@@ -122,10 +126,12 @@ export class PrismaCollectionRepository implements CollectionRepository {
       return [];
     }
 
-    const recipes = (await this.prisma.recipe.findMany({
-      where: { id: { in: recipeIds } },
-      select: recipeSelect,
-    })) as RecipeRow[];
+    const recipes = (await this.prismaClientProvider
+      .getClient()
+      .recipe.findMany({
+        where: { id: { in: recipeIds } },
+        select: recipeSelect,
+      })) as RecipeRow[];
 
     return recipes.map(recipeToDomain);
   }

@@ -2,6 +2,11 @@ import { Module } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/prisma/client.js';
 import { AdapterServerError } from './error.js';
+import {
+  PrismaClientProvider,
+  PrismaTransactionContext,
+} from './repo/prisma/prisma-client.provider.js';
+import { PrismaTransactionManager } from './transaction-manager.js';
 
 @Module({
   providers: [
@@ -19,7 +24,15 @@ import { AdapterServerError } from './error.js';
         });
       },
     },
+    PrismaTransactionContext,
+    PrismaClientProvider,
+    PrismaTransactionManager,
   ],
-  exports: [PrismaClient],
+  exports: [
+    PrismaClient,
+    PrismaTransactionContext,
+    PrismaClientProvider,
+    PrismaTransactionManager,
+  ],
 })
 export class PrismaModule {}

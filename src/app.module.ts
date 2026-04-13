@@ -11,6 +11,7 @@ import {
   LOGGER,
   RECIPE_REPOSITORY,
   COLLECTION_REPOSITORY,
+  TRANSACTION_MANAGER,
 } from './services/interfaces/tokens.js';
 import { PrismaRecipeRepository } from './adapters/repo/prisma/recipe.repo.js';
 import { PrismaCollectionRepository } from './adapters/repo/prisma/collection.repo.js';
@@ -19,6 +20,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { NestLoggerAdapter } from './adapters/logger.js';
 import { GlobalExceptionFilter } from './controllers/filters/global-exception.filter.js';
+import { PrismaTransactionManager } from './adapters/transaction-manager.js';
 
 @Module({
   imports: [PrismaModule, ConfigModule.forRoot({ isGlobal: true }), HttpModule],
@@ -41,6 +43,10 @@ import { GlobalExceptionFilter } from './controllers/filters/global-exception.fi
     {
       provide: LOGGER,
       useClass: NestLoggerAdapter,
+    },
+    {
+      provide: TRANSACTION_MANAGER,
+      useClass: PrismaTransactionManager,
     },
     GlobalExceptionFilter,
   ],

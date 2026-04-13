@@ -9,13 +9,14 @@ import {
 } from '../../domain/error.js';
 import { Recipe } from '../../domain/recipe.js';
 import { CreateRecipeDto, UpdateRecipeDto } from '../dto.js';
-import type { IdProvider } from '../interfaces/common.js';
+import type { IdProvider, TransactionManager } from '../interfaces/common.js';
 import type { CollectionRepository } from '../interfaces/repos/collections.interface.js';
 import type { RecipeRepository } from '../interfaces/repos/recipes.interface.js';
 import {
   COLLECTION_REPOSITORY,
   ID_PROVIDER,
   RECIPE_REPOSITORY,
+  TRANSACTION_MANAGER,
 } from '../interfaces/tokens.js';
 
 @Injectable()
@@ -26,6 +27,8 @@ export class RecipesService {
     private readonly recipeRepository: RecipeRepository,
     @Inject(COLLECTION_REPOSITORY)
     private readonly collectionRepository: CollectionRepository,
+    @Inject(TRANSACTION_MANAGER)
+    private readonly transactionManager: TransactionManager,
   ) {}
 
   private async getCurrentUserId(): Promise<string> {
@@ -156,7 +159,7 @@ export class RecipesService {
     if (!recipe) {
       throw new TargetNotFountError('recipe', 'Recipe not found');
     }
-    if (recipe.userId !== userId) {
+    if (recipe.userId !== userId && !recipe.isPublic) {
       throw new TargetNotFountError('recipe', 'Recipe not found');
     }
 
@@ -224,15 +227,18 @@ export class RecipesService {
       data.isPublic,
     );
 
-    await this.recipeRepository.update(currentRecipe);
+    await this.transactionManager.runInTransaction(async () => {
+      await this.recipeRepository.update(currentRecipe);
 
-    if (becamePrivate) {
-      await this.collectionRepository.removeRecipeFromForeignCollections(
-        currentRecipe.id,
-        userId,
-      );
-    }
+      if (becamePrivate) {
+        await this.collectionRepository.removeRecipeFromForeignCollections(
+          currentRecipe.id,
+          userId,
+        );
+      }
+    });
   }
+
   async delete(id: string) {
     this.validateId(id);
     const userId = await this.getCurrentUserId();
